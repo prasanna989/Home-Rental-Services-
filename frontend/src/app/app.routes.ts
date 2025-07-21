@@ -1,0 +1,26 @@
+import { Routes } from '@angular/router';
+import { Home } from './pages/home/home';
+import { About } from './pages/about/about';
+import { Login } from './pages/auth/login/login';
+import { Signup } from './pages/auth/signup/signup';
+import { AuthGuard } from './services/auth-guard.service';
+
+export const routes: Routes = [
+  { path: '', component: Home, title: 'Home Rental Service' },
+  { path: 'about', component: About, title: 'About Us' },
+  { path: 'login', component: Login, title: 'Login'},
+  { path: 'signup', component: Signup, title: 'Create Account'},
+
+  { 
+    path: 'profile', 
+    loadComponent: () => import('./pages/profile/profile').then(m => m.Profile),
+    canActivate: [AuthGuard],
+    title: 'Your Profile'
+  },
+  { 
+    path: 'book/:id', 
+    loadComponent: () => import('./pages/book-home/book-home').then(m => m.BookHome),
+    canActivate: [AuthGuard],
+    title: 'Book Home'
+  },
+];
