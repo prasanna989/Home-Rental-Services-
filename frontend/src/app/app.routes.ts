@@ -4,13 +4,22 @@ import { About } from './pages/about/about';
 import { Login } from './pages/auth/login/login';
 import { Signup } from './pages/auth/signup/signup';
 import { AuthGuard } from './services/auth-guard.service';
+import { AdminLogin } from './pages/admin-login/admin-login';
+import { AdminDashboardComponent } from './pages/admin-dashboard/admin-dashboard';
+import { UserListComponent } from './pages/user-list.component/user-list.component';
 
 export const routes: Routes = [
   { path: '', component: Home, title: 'Home Rental Service' },
   { path: 'about', component: About, title: 'About Us' },
   { path: 'login', component: Login, title: 'Login'},
   { path: 'signup', component: Signup, title: 'Create Account'},
-
+  { path: 'admin', component: AdminLogin, title: 'Admin' },
+  { path: 'users-list', component: UserListComponent },
+  {
+    path: 'admin/dashboard',
+    component: AdminDashboardComponent,
+    title: 'Admin Dashboard'
+  },
   { 
     path: 'profile', 
     loadComponent: () => import('./pages/profile/profile').then(m => m.Profile),

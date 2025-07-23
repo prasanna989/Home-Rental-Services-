@@ -1,6 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { AuthService } from '../../services/auth.service';
-import { RouterLink } from '@angular/router';
+import {RouterLink} from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { SearchFilter } from '../search-filter/search-filter';
 
@@ -18,7 +18,8 @@ export class Navbar {
     { name: 'Home', link: '/' },
     { name: 'Browse Homes', link: '/' },
     { name: 'About', link: '/about' },
-    { name: 'Contact', link: '#' }
+    { name: 'Contact', link: '#' },
+    { name: 'Admin', link: '/admin' },
   ];
 
   logout() {
