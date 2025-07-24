@@ -5,6 +5,7 @@ interface User {
   email: string;
   password: string;
   name?: string;
+  phone: string;
 }
 interface PropertyListing {
   id: number;
@@ -21,7 +22,7 @@ interface PropertyListing {
 })
 export class AuthService {
   private users: User[] = [
-    { email: 'test@example.com', password: 'password123', name: 'Test User' }
+    { email: 'test@example.com', password: 'password123', name: 'Test User' ,phone:'1234567890'}
   ];
    private propertyListings: PropertyListing[] = [
     {
@@ -66,11 +67,11 @@ export class AuthService {
     return false;
   }
 
-  signup(name: string, email: string, password: string): boolean {
+  signup(name: string, email: string, password: string, phone:string): boolean {
     const userExists = this.users.some(u => u.email === email);
     if (userExists) return false;
 
-    this.users.push({ name, email, password });
+    this.users.push({ name, email, password, phone });
     this.login(email, password);
     return true;
   }
