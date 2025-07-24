@@ -4,7 +4,6 @@
   align-items: center;
   min-height: 80vh;
   padding: 2rem;
-  background: #f8f9fa;
 }
 
 .auth-card {
@@ -14,7 +13,6 @@
   padding: 2rem;
   width: 100%;
   max-width: 400px;
-  margin: 3rem auto;
 }
 
 .auth-card h2 {
@@ -57,11 +55,10 @@
   background-color: #45a049;
 }
 
-.error-text {
+.error-message {
   color: #e74c3c;
   margin-bottom: 1rem;
   text-align: center;
-  display:block;
 }
 
 .auth-footer {
@@ -73,48 +70,4 @@
 .auth-footer a {
   color: #4CAF50;
   text-decoration: none;
-}
-
-.divider {
-  text-align: center;
-  margin: 1.5rem 0;
-  font-weight: 500;
-  color: #999;
-  position: relative;
-}
-.divider::before,
-.divider::after {
-  content: "";
-  position: absolute;
-  top: 50%;
-  width: 40%;
-  height: 1px;
-  background: #ddd;
-}
-.divider::before {
-  left: 0;
-}
-.divider::after {
-  right: 0;
-}
-
-.google-button {
-  width: 100%;
-  padding: 0.75rem;
-  background: #fff;
-  color: #444;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  font-size: 1rem;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  margin-top: 1rem;
-}
-
-.google-button img {
-  width: 20px;
-  height: 20px;
 }
