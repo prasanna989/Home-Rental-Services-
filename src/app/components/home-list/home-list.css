@@ -1,0 +1,85 @@
+.home-list {
+  padding: 2rem 0;
+  text-align: center;
+}
+
+.home-list h2 {
+  font-size: 2rem;
+  margin-bottom: 2rem;
+}
+
+.homes-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 2rem;
+  margin-bottom: 2rem;
+}
+
+.home-card {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  overflow: hidden;
+  transition: transform 0.3s;
+}
+
+.home-card:hover {
+  transform: translateY(-5px);
+}
+
+.home-card img {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+}
+
+.home-info {
+  padding: 1rem;
+  text-align: left;
+}
+
+.home-info h3 {
+  margin: 0.5rem 0;
+}
+
+.price {
+  font-weight: bold;
+  font-size: 1.2rem;
+  color: #4CAF50;
+  margin: 0.5rem 0;
+}
+
+.available {
+  display: inline-block;
+  background-color: #4CAF50;
+  color: white;
+  padding: 0.3rem 0.6rem;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  margin-bottom: 0.5rem;
+}
+
+.home-card button {
+  width: 100%;
+  padding: 0.5rem;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.view-more {
+  background-color: transparent;
+  border: 2px solid #4CAF50;
+  color: #4CAF50;
+  padding: 0.8rem 1.5rem;
+  border-radius: 4px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.view-more:hover {
+  background-color: #4CAF50;
+  color: white;
+}
