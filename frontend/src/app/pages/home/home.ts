@@ -12,7 +12,7 @@ import { map } from 'rxjs/operators';
 
 @Component({
   selector: 'app-home',
-  imports: [CommonModule, Header, HomeList, Footer, Navbar, HomeList],
+  imports: [CommonModule, Header, HomeList, Footer, HomeList],
   templateUrl: './home.html',
   styleUrl: './home.css'
 })
