@@ -1,4 +1,5 @@
-import { Component, Input, inject, OnInit } from '@angular/core';
+
+import { Component, Input, OnInit, inject } from '@angular/core';
 import { HomeService } from '../../services/home.service';
 import { Home } from '../../models/home.model';
 import { CommonModule } from '@angular/common';
@@ -10,47 +11,42 @@ import { AuthService } from '../../services/auth.service';
   standalone: true,
   imports: [CommonModule, RouterLink],
   templateUrl: './home-list.html',
-  styleUrls: ['./home-list.css']
+  styleUrls: ['./home-list.css']  
 })
 export class HomeList implements OnInit {
   @Input() homes: Home[] = [];
-  bookings: any[] = [];
-
   authService = inject(AuthService);
 
   constructor(private homeService: HomeService) {}
 
   ngOnInit(): void {
-    
-    if (!this.homes || this.homes.length === 0) {
+    if (!this.homes.length) {
       this.homes = this.homeService.getAvailableHomes();
     }
 
     
-    this.homes = this.homes.map(home => ({
-      ...home,
-      isFavorite: home.isFavorite ?? false
-    }));
-
-    
-    const storedBookings = localStorage.getItem('bookings');
-    if (storedBookings) {
-      this.bookings = JSON.parse(storedBookings);
-    }
+    const favs = JSON.parse(localStorage.getItem('favorites') || '[]');
+    this.homes.forEach(home => {
+      home.isFavorite = favs.some((f: Home) => f.id === home.id);
+    });
   }
 
 
-  toggleFavorite(home: Home): void {
-    home.isFavorite = !home.isFavorite;
-  }
-
- 
   trackByHomeId(index: number, home: Home): number {
     return home.id;
   }
 
   
-  trackByBooking(index: number, booking: any): string {
-    return booking.name + '_' + booking.date;
+  toggleFavorite(home: Home): void {
+    home.isFavorite = !home.isFavorite;
+    let favorites: Home[] = JSON.parse(localStorage.getItem('favorites') || '[]');
+
+    if (home.isFavorite) {
+      favorites.push(home);
+    } else {
+      favorites = favorites.filter((h: Home) => h.id !== home.id);
+    }
+
+    localStorage.setItem('favorites', JSON.stringify(favorites));
   }
 }
