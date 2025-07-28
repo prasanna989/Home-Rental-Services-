@@ -1,0 +1,68 @@
+<div class="auth-container">
+  <div class="auth-card">
+    <h2>Create Account</h2>
+
+    <div *ngIf="error" class="error-message">{{ error }}</div>
+
+    <form [formGroup]="signupForm" (ngSubmit)="onSubmit()">
+      <div class="form-group">
+        <label for="name">Full Name</label>
+        <input type="text" id="name" formControlName="name" placeholder="Enter your name" />
+        <small *ngIf="(signupForm.get('name')?.touched || submitted) && signupForm.get('name')?.errors?.['required']" class="error-text">
+          Name is required
+        </small>
+        <small *ngIf="signupForm.get('name')?.errors?.['minlength']" class="error-text">
+          Minimum 3 characters required
+        </small>
+      </div>
+
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input type="email" id="email" formControlName="email" placeholder="Enter your email" />
+        <small *ngIf="(signupForm.get('email')?.touched || submitted) && signupForm.get('email')?.errors?.['required']" class="error-text">
+          Email is required
+        </small>
+        <small *ngIf="signupForm.get('email')?.errors?.['email']" class="error-text">
+          Enter a valid email
+        </small>
+      </div>
+
+      <div class="form-group">
+      <label for="phone">Phone Number</label>
+      <input type="text" id="phone" formControlName="phone" placeholder="Enter your phone number" />
+      
+      <small *ngIf="signupForm.get('phone')?.touched && signupForm.get('phone')?.errors?.['required']" class="error-text">
+        Phone number is required
+      </small>
+      <small *ngIf="signupForm.get('phone')?.errors?.['pattern']" class="error-text">
+        Enter a valid 10-digit phone number
+      </small>
+    </div>
+
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input type="password" id="password" formControlName="password" placeholder="Enter your password" />
+        <small *ngIf="(signupForm.get('password')?.touched || submitted) && signupForm.get('password')?.errors?.['required']" class="error-text">
+          Password is required
+        </small>
+        <small *ngIf="signupForm.get('password')?.errors?.['minlength']" class="error-text">
+          Password must be at least 6 characters
+        </small>
+      </div>
+
+      <button type="submit" class="auth-button">Sign Up</button>
+    </form>
+
+    <div class="divider">OR</div>
+
+    <button type="button" class="google-button" (click)="signUpWithGoogle()">
+      <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google Icon" />
+      Sign Up with Google
+    </button>
+
+    <div class="auth-footer">
+      Already have an account? <a routerLink="/login">Login</a>
+    </div>
+  </div>
+</div>
+

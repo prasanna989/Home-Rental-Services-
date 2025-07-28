@@ -1,0 +1,10 @@
+<div class="profile-container">
+  <h2>Your Profile</h2>
+  
+  <div class="profile-info">
+    @if (authService.currentUser()) {
+      <p><strong>Name:</strong> {{ authService.currentUser()?.name }}</p>
+      <p><strong>Email:</strong> {{ authService.currentUser()?.email }}</p>
+    }
+  </div>
+</div>
