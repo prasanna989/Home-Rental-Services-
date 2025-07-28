@@ -16,7 +16,6 @@ export class Navbar {
 
   navItems = [
     { name: 'Home', link: '/' },
-    { name: 'Browse Homes', link: '/' },
     { name: 'About', link: '/about' },
     { name: 'Contact', link: '/contact' },
     { name: 'Admin', link: '/admin' },
