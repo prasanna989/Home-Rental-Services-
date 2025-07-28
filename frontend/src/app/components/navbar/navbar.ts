@@ -18,7 +18,7 @@ export class Navbar {
     { name: 'Home', link: '/' },
     { name: 'Browse Homes', link: '/' },
     { name: 'About', link: '/about' },
-    { name: 'Contact', link: '#' },
+    { name: 'Contact', link: '/contact' },
     { name: 'Admin', link: '/admin' },
   ];
 

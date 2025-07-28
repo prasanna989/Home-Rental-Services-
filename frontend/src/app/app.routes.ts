@@ -7,6 +7,7 @@ import { AuthGuard } from './services/auth-guard.service';
 import { AdminLogin } from './pages/admin-login/admin-login';
 import { AdminDashboardComponent } from './pages/admin-dashboard/admin-dashboard';
 import { UserListComponent } from './pages/user-list.component/user-list.component';
+import { Contact } from './pages/contact/contact';
 
 export const routes: Routes = [
   { path: '', component: Home, title: 'Home Rental Service' },
@@ -15,6 +16,7 @@ export const routes: Routes = [
   { path: 'signup', component: Signup, title: 'Create Account'},
   { path: 'admin', component: AdminLogin, title: 'Admin' },
   { path: 'users-list', component: UserListComponent },
+  {path:'contact',component:Contact},
   {
     path: 'admin/dashboard',
     component: AdminDashboardComponent,

@@ -1,0 +1,33 @@
+<div class="contact-container">
+  <div class="contact-card">
+    <h2>Contact Us</h2>
+    <form [formGroup]="contactForm" (ngSubmit)="onSubmit()">
+      
+      <div class="form-group">
+        <label for="name">Full Name</label>
+        <input type="text" id="name" formControlName="name" placeholder="Enter your name" />
+        <small *ngIf="contactForm.get('name')?.touched && contactForm.get('name')?.invalid" class="error-text">
+          Name is required
+        </small>
+      </div>
+
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input type="email" id="email" formControlName="email" placeholder="Enter your email" />
+        <small *ngIf="contactForm.get('email')?.touched && contactForm.get('email')?.invalid" class="error-text">
+          Valid email is required
+        </small>
+      </div>
+
+      <div class="form-group">
+        <label for="message">Message</label>
+        <textarea id="message" formControlName="message" placeholder="Write your message"></textarea>
+        <small *ngIf="contactForm.get('message')?.touched && contactForm.get('message')?.invalid" class="error-text">
+          Message must be at least 10 characters
+        </small>
+      </div>
+
+      <button type="submit" class="contact-button" [disabled]="contactForm.invalid">Send Message</button>
+    </form>
+  </div>
+</div>
