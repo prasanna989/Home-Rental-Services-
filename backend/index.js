@@ -1,22 +1,23 @@
-import express from 'express';
-import mongoose from 'mongoose';
-import dotenv from 'dotenv';
-import userRouter from './routes/user.route.js';
-dotenv.config();
+require('dotenv').config();
+const express = require('express');
+const cors = require('cors');
+const bodyParser = require('body-parser');
+const connectDB = require('./config/db');
 
-mongoose.connect(process.env.MONGO).then(()=> {
-  console.log("Connected to MongoDB");
-}).catch((err) => {
-    console.log(err);
-})
+const contactRoutes = require('./routes/contact');
 
 const app = express();
 
-app.use('/api/user', userRouter);
+app.use(cors());
+app.use(bodyParser.json());
 
+connectDB();
 
-app.listen(3000, () => {
-  console.log('Server running on port 3000');
-})
-// console.log('Mongo URI:', process.env.MONGO);
+app.use('/api/contact', contactRoutes);
 
+app.get('/', (req, res) => {
+  res.send('Contact API is running...');
+});
+
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`));
