@@ -1,0 +1,29 @@
+<div class="homes-container">
+  <div class="home-card" *ngFor="let home of homes; trackBy: trackByHomeId">
+    <div class="image-container">
+      <img [src]="home.imageUrl" [alt]="home.title" />
+      <span
+        class="heart-icon"
+        [class.favorited]="home.isFavorite"
+        (click)="toggleFavorite(home)">
+        <i class="fa" [ngClass]="home.isFavorite ? 'fa-heart' : 'fa-heart-o'"></i>
+      </span>
+    </div>
+
+    <div class="home-info">
+      <h3>{{ home.title }}</h3>
+      <p>{{ home.type }} in {{ home.location }}</p>
+      <p class="price">${{ home.price }}/month</p>
+
+      <div class="button-group">
+        <span class="available" *ngIf="home.available">Available</span>
+        <button
+          [routerLink]="['/book']"
+          [queryParams]="{ title: home.title, location: home.location }"
+          class="book-btn">
+          Book Now
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
