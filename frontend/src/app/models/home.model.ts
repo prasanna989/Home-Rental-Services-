@@ -1,10 +1,14 @@
 export interface Home {
   id: number;
   title: string;
-  type: string;
+  type: string;         
   price: number;
   location: string;
   available: boolean;
   imageUrl: string;
-  amenities: string[]; 
+  amenities: string[];
+  rentPerDay: number;    
+}
+export interface HomeList {
+  homes: Home[];
 }
