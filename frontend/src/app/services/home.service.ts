@@ -51,7 +51,7 @@ export class HomeService {
       id: 5,
       title: 'Mountain View Cabin',
       type: 'Cabin',
-      price: 750,
+      price: 1,
       location: 'Aspen',
       available: true,
       imageUrl: 'assets/images/home5.jpg',
