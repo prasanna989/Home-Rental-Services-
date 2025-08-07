@@ -1,0 +1,16 @@
+<div class="browse-home-container">
+  <div class="home-list">
+    <div *ngFor="let home of homes" class="home-card">
+      <div class="home-image-section">
+        <img [src]="home.imageUrl" alt="{{ home.title }}" class="home-image" />
+      </div>
+      <div class="home-info-section">
+        <h3>{{ home.title }}</h3>
+        <p><strong>Location:</strong> {{ home.location }}</p>
+        <p><strong>Type:</strong> {{ home.type }}</p>
+        <p><strong>Price:</strong> ₹{{ home.price }}</p>
+        <p><strong>Amenities:</strong> {{ home.amenities.join(', ') }}</p>
+      </div>
+    </div>
+  </div>
+</div>
