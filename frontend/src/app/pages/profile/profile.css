@@ -140,3 +140,8 @@ button:hover {
   text-align: center;
   padding: 1rem;
 }
+
+.booked-flag {
+  color: red;
+  font-weight: bold;
+}

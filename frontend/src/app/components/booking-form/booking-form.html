@@ -1,0 +1,41 @@
+<div class="booking-form-container">
+  <div class="booking-card">
+    <h2 class="title">{{ home.title }}</h2>
+    <img [src]="home.imageUrl" alt="Home image" class="home-image" />
+
+    <form (ngSubmit)="submitBooking()">
+      <div class="form-group">
+        <label for="checkIn">Check-In Date:</label>
+        <input type="date" id="checkIn" [(ngModel)]="checkInDate" name="checkIn" required />
+      </div>
+
+      <div class="form-group">
+        <label for="checkOut">Check-Out Date:</label>
+        <input type="date" id="checkOut" [(ngModel)]="checkOutDate" name="checkOut" required />
+      </div>
+
+      <div class="form-summary">
+        <p><strong>Total Nights:</strong> {{ getNights() }}</p>
+        <p><strong>Total Price:</strong> ₹{{ home.price * getNights() }}</p>
+      </div>
+      
+    <div class="form-group">
+    <label for="paymentMethod">Payment Method</label>
+    <select id="paymentMethod" [(ngModel)]="paymentMethod" name="paymentMethod" required>
+        <option value="" disabled selected>Select a payment method</option>
+        <option value="credit">Credit Card</option>
+        <option value="debit">Debit Card</option>
+        <option value="upi">UPI</option>
+        <option value="cash">Cash on Arrival</option>
+    </select>
+    </div>
+
+
+      <div class="form-actions">
+        <button type="submit" class="btn primary">Confirm Booking</button>
+        <button type="button" class="btn secondary" (click)="close.emit()">Cancel</button>
+      </div>
+    </form>
+  </div>
+</div>
+

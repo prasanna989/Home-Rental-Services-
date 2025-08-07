@@ -43,4 +43,14 @@ export class Home {
       amenities: []
     });
   }
+  bookHome(homeId: number) {
+  const bookings = JSON.parse(localStorage.getItem('bookedHomes') || '[]');
+
+  if (!bookings.includes(homeId)) {
+    bookings.push(homeId);
+    localStorage.setItem('bookedHomes', JSON.stringify(bookings));
+  }
+
+}
+
 }

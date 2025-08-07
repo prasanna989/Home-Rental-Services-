@@ -99,4 +99,23 @@ export class HomeService {
       return true;
     });
   }
+  updateHomeStatus(id: number, status: boolean): void {
+    const home = this.homes.find(h => h.id === id);
+    if (home) {
+      home.available = status;
+    }
+  }
+  // Add this in HomeService
+  bookedHomes: Home[] = [];
+
+  addBooking(home: Home) {
+    home.available = false;
+    this.bookedHomes.push(home);
+  }
+
+  getBookedHomes(): Home[] {
+    return this.bookedHomes;
+  }
+
+
 }

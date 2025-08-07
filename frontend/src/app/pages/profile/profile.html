@@ -94,4 +94,15 @@
       </div>
     }
   </div>
+  <div class="booked-section">
+    <h2>Your Booked Homes</h2>
+    <div *ngFor="let home of bookedHomes" class="booked-home">
+      <h3>{{ home.title }}</h3>
+      <img [src]="home.imageUrl" alt="Home" />
+      <p>Price: ₹{{ home.price }}</p>
+      <p>Status: <span class="booked-flag">Booked</span></p>
+    </div>
+
+</div>
+
 </div>
