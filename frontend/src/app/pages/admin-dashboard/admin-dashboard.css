@@ -1,160 +1,357 @@
-.admin-dashboard {
-  width: 100%;
+/* Layout */
+.dashboard-container {
+  display: flex;
   min-height: 100vh;
-  background: #f4f7fb;
-  padding: 2rem;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #f4f6f9;
 }
 
-.admin-dashboard h1 {
-  text-align: center;
-  margin-bottom: 2rem;
-  font-size: 2rem;
+/* Sidebar */
+.sidebar {
+  width: 300px;
+  background: #ffffff;
+  padding: 2rem;
+  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.05);
+  border-right: 1px solid #e2e8f0;
+  overflow-y: auto;
+}
+
+.sidebar h2 {
+  margin-bottom: 1rem;
+  font-size: 1.4rem;
   color: #333;
 }
 
-.dashboard-card {
-  background: #fff;
-  padding: 1.5rem;
+.sidebar span {
+  display: inline-block;
+  background: #e6f5ea;
+  color: #2f855a;
+  padding: 4px 8px;
+  margin: 3px 3px 0 0;
   border-radius: 12px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  text-align: center;
-  transition: transform 0.2s ease;
+  font-size: 12px;
 }
 
-.dashboard-card:hover {
-  transform: translateY(-5px);
+/* Sticky Form */
+.sticky-form {
+  position: sticky;
+  top: 20px;
+  background: white;
+  border-radius: 10px;
+  padding: 1rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  display: grid;
+  gap: 1rem;
 }
 
-.dashboard-card h2 {
-  margin-bottom: 0.5rem;
-  color: #2c3e50;
+.sticky-form input,
+.sticky-form select {
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 0.875rem;
+  background-color: #f1f5f9;
+  width: 100%;
 }
 
-.dashboard-card p {
-  color: #555;
+.sticky-form input[type="file"] {
+  display: inline-block;
+  width: auto;
+  padding: 4px 6px;
+  font-size: 0.75rem;
+  margin-right: 10px;
+}
+
+/* Buttons inside form */
+.sticky-form button[type="submit"],
+.inline-edit-form .bg-green-500 {
+  background-color: #28a745;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+}
+.sticky-form button[type="submit"]:hover,
+.inline-edit-form .bg-green-500:hover {
+  background-color: #218838;
+}
+
+
+
+.sticky-form img {
+  border-radius: 6px;
+  max-width: 100%;
+  object-fit: cover;
+}
+
+/* Main Content */
+.main-content {
+  flex: 1;
+  padding: 2rem;
+  overflow-x: auto;
+}
+
+.main-content h3 {
+  font-size: 1.4rem;
+  font-weight: bold;
+  color: #222;
   margin-bottom: 1rem;
 }
 
-.action-btn {
-  background: #2563eb;
-  color: white;
-  border: none;
-  padding: 10px 18px;
-  border-radius: 6px;
-  font-size: 14px;
-  cursor: pointer;
-  transition: background 0.3s ease;
-}
-
-.action-btn:hover {
-  background: #1e40af;
-}   
-/* General dashboard wrapper */
-.admin-dashboard {
-  padding: 20px;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background-color: #f9fafb;
-}
-
-/* Section heading */
-.admin-dashboard h2 {
-  margin-bottom: 16px;
-  font-size: 1.5rem;
-  color: #1f2937;
-}
-
-/* Filter Dropdown */
-.admin-dashboard select {
-  width: 100%;
-  padding: 8px 12px;
-  border: 1px solid #d1d5db;
-  border-radius: 6px;
-  font-size: 1rem;
-  background-color: white;
-  transition: border-color 0.3s;
-}
-
-.admin-dashboard select:hover {
-  border-color: #2563eb;
-}
-
-/* Table styling */
-.admin-dashboard table {
+/* Table */
+.property-table {
   width: 100%;
   border-collapse: collapse;
-  background-color: white;
-  border-radius: 8px;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 10px;
   overflow: hidden;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
 }
 
-/* Table headers */
-.admin-dashboard th {
-  background-color: #f3f4f6;
-  text-align: left;
-  padding: 12px;
-  font-weight: 600;
-  border-bottom: 1px solid #e5e7eb;
+.property-table thead {
+  background-color: #4CAF50;
 }
 
-/* Table rows */
-.admin-dashboard td {
-  padding: 12px;
-  border-bottom: 1px solid #e5e7eb;
-  font-size: 0.95rem;
-  color: #374151;
-  transition: background-color 0.2s ease;
+.property-table th,
+.property-table td {
+  padding: 0.8rem;
+  text-align: center;
+  border: 1px solid #ddd;
+  font-size: 0.875rem;
 }
 
-/* Hover effect for table rows */
-.admin-dashboard tbody tr:hover {
-  background-color: #e0f2fe; /* Light blue */
-  cursor: pointer;
-}
-
-/* Status coloring */
-.status-Flagged {
-  color: #dc2626;
+.property-table th {
+  color: white;
   font-weight: bold;
 }
 
-.status-Active {
-  color: #16a34a;
-  font-weight: bold;
+.property-table td img {
+  width: 100px;
+  height: 70px;
+  object-fit: cover;
+  border-radius: 6px;
 }
 
-.status-Pending {
-  color: #d97706;
+/* Status */
+.status {
+  padding: 4px 10px;
+  border-radius: 6px;
   font-weight: bold;
+  font-size: 0.9rem;
+  color: white;
 }
 
-.status-Disabled {
-  color: #6b7280;
-  font-weight: bold;
+.status.available {
+  background-color: #4CAF50;
+}
+
+.status.unavailable {
+  background-color: #dc3545;
 }
 
 /* Action buttons */
-.action-btn {
-  background-color: #3b82f6;
-  color: white;
+.actions {
+  display: inline-flex;
+  gap: 8px;
+  padding: 12px 16px;
+  justify-content: center;
+  align-items: center;
+  
+}
+.action-cell {
+  text-align: center;
+  vertical-align: middle;
+}
+
+.action-buttons {
+  display: inline-flex;
+  gap: 8px;
+  justify-content: center;
+  align-items: center;
+}
+
+
+.edit-btn,
+.remove-btn {
   padding: 6px 12px;
-  margin-right: 8px;
+  font-size: 14px;
   border: none;
-  border-radius: 6px;
+  border-radius: 4px;
   cursor: pointer;
-  font-size: 0.9rem;
-  transition: background-color 0.2s ease, transform 0.2s ease;
+  color: white;
 }
 
-.action-btn:hover {
-  background-color: #2563eb;
-  transform: translateY(-1px);
+.edit-btn {
+  background-color: #007bff;
+}
+.edit-btn:hover {
+  background-color: #0056b3;
 }
 
-.action-btn.bg-red-600 {
-  background-color: #dc2626;
+.remove-btn {
+  background-color: #dc3545;
+}
+.remove-btn:hover {
+  background-color: #c82333;
 }
 
-.action-btn.bg-red-600:hover {
-  background-color: #b91c1c;
+/* Inline Edit Form */
+.edit-row td {
+  background: #f9f9f9;
+  border: none;
+}
+
+.inline-edit-form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.inline-edit-form input,
+.inline-edit-form select {
+  flex: 1 1 150px;
+  padding: 0.5rem;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+}
+
+.inline-edit-form .col-span-2 {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+/* Edit Row Image */
+.edit-row img {
+  margin-top: 0;
+  max-height: 80px;
+  border-radius: 6px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .dashboard-container {
+    flex-direction: column;
+  }
+
+  .sidebar {
+    width: 100%;
+    box-shadow: none;
+    border-bottom: 1px solid #ddd;
+  }
+
+  .main-content {
+    padding: 1rem;
+  }
+
+  .inline-edit-form {
+    grid-template-columns: 1fr;
+  }
+
+  .property-table td img {
+    width: 80px;
+    height: 60px;
+  }
+}
+.inline-edit-form .bg-green-500 {
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+}
+.inline-edit-form .bg-green-500:hover {
+  background-color: #4CAF50;
+}
+.inline-edit-form {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  padding: 10px;
+}
+
+.inline-edit-form input,
+.inline-edit-form select {
+  padding: 4px 8px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.inline-edit-form input[type="file"] {
+  font-size: 12px;
+  padding: 2px 4px;
+  height: 32px;
+  width: 160px;
+}
+
+/* Save & Cancel buttons same as 'Available' badge */
+.inline-edit-form .btn-green {
+  background-color: #28a745;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.inline-edit-form .btn-green:hover {
+  background-color: #218838;
+}
+
+/* Ensure buttons align with others */
+.inline-edit-form .action-buttons {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  justify-content: flex-start;
+}
+.add-amenity-btn {
+  background-color:#218838;
+  color: white;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+.btn-success {
+  background-color: #218838;
+  color: white;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.amenity-input {
+  margin-right: 8px;
+  padding: 6px 10px;
+}
+
+.amenity-list span {
+  background-color: #f1f1f1;
+  padding: 4px 8px;
+  border-radius: 4px;
+}
+/* Style for the 'Add Amenity' button */
+.add-amenity-btn {
+  background-color: #4CAF50; /* Green color */
+  color: white;
+  padding: 8px 12px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-left: 8px;
+  font-weight: bold;
+  transition: background-color 0.3s;
+}
+
+.add-amenity-btn:hover {
+  background-color: #45a049; /* Slightly darker on hover */
 }
