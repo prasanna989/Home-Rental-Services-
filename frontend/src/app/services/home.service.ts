@@ -3,7 +3,7 @@ import { Home } from '../models/home.model';
 import { FilterOptions } from '../models/filter-options.model';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class HomeService {
   private homes: Home[] = [
@@ -12,52 +12,94 @@ export class HomeService {
       title: 'Modern Apartment in Downtown',
       type: 'Apartment',
       price: 1200,
+      rentPerDay: 150,
       location: 'New York',
       available: true,
-      imageUrl: 'assets/images/home1.jpg',
-      amenities: ['WiFi', 'Air Conditioning', 'Parking']
+      imageUrl: 'https://wp-tid.zillowstatic.com/18/renting-a-house-with-a-pool-fa1550.jpg',
+      amenities: ['WiFi', 'Air Conditioning', 'Parking'],
     },
     {
       id: 2,
       title: 'Cozy Cottage by the Lake',
       type: 'Cottage',
       price: 950,
+      rentPerDay: 100,
       location: 'Lake Tahoe',
       available: true,
-      imageUrl: 'assets/images/home2.jpg',
-      amenities: ['WiFi', 'Pool', 'Kitchen']
+      imageUrl: 'https://tse4.mm.bing.net/th/id/OIP.MPFaqSXsMLmNrBaZOqvltwHaE8?pid=Api&P=0&h=180',
+      amenities: ['WiFi', 'Pool', 'Kitchen'],
     },
     {
       id: 3,
       title: 'Luxury Villa with Ocean View',
       type: 'Villa',
       price: 2200,
+      rentPerDay: 300,
       location: 'Malibu',
       available: true,
-      imageUrl: 'assets/images/home3.jpg',
-      amenities: ['Pool', 'Parking', 'Air Conditioning', 'Kitchen']
+      imageUrl: 'https://u.realgeeks.media/fortmeadehomes/timberbrook/01._Seven_Oaks_home_for_rent.jpg',
+      amenities: ['Pool', 'Parking', 'Air Conditioning', 'Kitchen'],
     },
     {
       id: 4,
       title: 'Downtown Loft Apartment',
       type: 'Apartment',
       price: 850,
+      rentPerDay: 90,
       location: 'Chicago',
       available: true,
-      imageUrl: 'assets/images/home4.jpg',
-      amenities: ['WiFi', 'Kitchen']
+      imageUrl: 'https://www.poconomountainrentals.com/wp-content/uploads/2021/03/8-Bed-Pocono-Mountains-Rental-Homes.jpeg',
+      amenities: ['WiFi', 'Kitchen'],
     },
     {
       id: 5,
       title: 'Mountain View Cabin',
       type: 'Cabin',
-      price: 1,
+      price: 750,
+      rentPerDay: 85,
       location: 'Aspen',
       available: true,
-      imageUrl: 'assets/images/home5.jpg',
-      amenities: ['Parking', 'Kitchen']
+      imageUrl: 'https://tse1.mm.bing.net/th/id/OIP.Mb_S329u13GmsIVLjnjGJQHaE8?pid=Api&P=0&h=180',
+      amenities: ['Parking', 'Kitchen'],
+    },
+    {
+      id: 6,
+      title: 'Seaside Bungalow',
+      type: 'Bungalow',
+      price: 1100,
+      rentPerDay: 120,
+      location: 'Goa',
+      available: true,
+      imageUrl: 'https://tse4.mm.bing.net/th/id/OIP.DAWRXOO0hAKyq8g12aPBLwHaEK?pid=Api&P=0&h=180',
+      amenities: ['WiFi', 'Pool', 'Air Conditioning'],
+    },
+    {
+      id: 7,
+      title: 'Penthouse Suite with City View',
+      type: 'Penthouse',
+      price: 2600,
+      rentPerDay: 350,
+      location: 'Dubai',
+      available: true,
+      imageUrl: 'https://tse2.mm.bing.net/th/id/OIP.vJ7cA56QNO-Nqj4byFcLPQHaE8?pid=Api&P=0&h=180',
+      amenities: ['WiFi', 'Parking', 'Kitchen', 'Air Conditioning'],
+    },
+    {
+      id: 8,
+      title: 'Countryside Farmhouse Retreat',
+      type: 'Farmhouse',
+      price: 600,
+      rentPerDay: 70,
+      location: 'Nashville',
+      available: true,
+      imageUrl: 'https://www.orlandovacationhomes.com/wp-content/uploads/2019/10/c3Studio_835GoldenBearDr_11.19.18_twilight_0009-copy.jpg',
+      amenities: ['Kitchen', 'Parking', 'WiFi'],
     }
   ];
+
+  constructor() {
+    console.log('HomeService loaded');
+  }
 
   getHomes(): Home[] {
     return this.homes;
@@ -73,30 +115,25 @@ export class HomeService {
 
   getFilteredHomes(filters: FilterOptions): Home[] {
     return this.homes.filter(home => {
-      // Location filter
-      if (filters.location && 
-          !home.location.toLowerCase().includes(filters.location.toLowerCase())) {
-        return false;
-      }
-      
-      // Price filter
-      if (home.price < filters.minPrice || home.price > filters.maxPrice) {
-        return false;
-      }
-      
-      // Property type filter
-      if (filters.propertyTypes.length > 0 && 
-          !filters.propertyTypes.includes(home.type)) {
-        return false;
-      }
-      
-      // Amenities filter (home should have all selected amenities)
-      if (filters.amenities.length > 0 && 
-          !filters.amenities.every(a => home.amenities.includes(a))) {
-        return false;
-      }
-      
-      return true;
+      const matchesLocation =
+        !filters.location || home.location.toLowerCase().includes(filters.location.toLowerCase());
+
+      const matchesPrice =
+        home.price >= (filters.minPrice ?? 0) && home.price <= (filters.maxPrice ?? Infinity);
+
+      const matchesType =
+        filters.propertyTypes.length === 0 || filters.propertyTypes.includes(home.type);
+
+      const matchesAmenities =
+        filters.amenities.length === 0 ||
+        filters.amenities.every(a => home.amenities.includes(a));
+
+      return (
+        matchesLocation &&
+        matchesPrice &&
+        matchesType &&
+        matchesAmenities
+      );
     });
   }
   updateHomeStatus(id: number, status: boolean): void {
@@ -117,5 +154,23 @@ export class HomeService {
     return this.bookedHomes;
   }
 
+  addHome(newHome: Home): void {
+    newHome.id = this.homes.length > 0
+      ? Math.max(...this.homes.map(h => h.id)) + 1
+      : 1;
+    newHome.available = true;
+    this.homes.push(newHome);
+  }
 
+  removeHome(id: number): void {
+    this.homes = this.homes.filter(home => home.id !== id);
+  }
+
+  updateHome(updated: Home): void {
+    const index = this.homes.findIndex(h => h.id === updated.id);
+    if (index !== -1) {
+      this.homes[index] = { ...updated };
+    }
+  }
 }
+
