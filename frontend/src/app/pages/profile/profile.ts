@@ -3,6 +3,8 @@ import { AuthService } from '../../services/auth.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { PropertyPreview } from '../../components/property-preview/property-preview';
+import { Home } from '../../models/home.model';
+import { HomeService } from '../../services/home.service';
 
 
 @Component({
@@ -18,10 +20,20 @@ export class Profile {
   editedUser: any = {};
   selectedFile: File | null = null;
   previewImageUrl: string | null = null;
+  bookedHomes: Home[] = [];
+  constructor(private homeService: HomeService) {}
 
   ngOnInit() {
     this.resetEditForm();
+    this.loadBookedHomes();
+    this.bookedHomes = this.homeService.getBookedHomes();
   }
+
+  loadBookedHomes() {
+    const stored = localStorage.getItem('bookedHomes');
+    this.bookedHomes = stored ? JSON.parse(stored) : [];
+  }
+
 
   toggleEdit() {
     this.isEditing = !this.isEditing;

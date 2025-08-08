@@ -7,14 +7,41 @@
         <div class="home-info">
           <h3>{{ home.title }}</h3>
           <p>{{ home.type }} in {{ home.location }}</p>
-          <p class="price">${{ home.price }}/month</p>
-          @if (home.available) {
-            <span class="available">Available</span>
-          }
-          <button [routerLink]="['/book', home.id]">Book Now</button>
+          <p>₹{{ home.price }}</p>
+
+          <p>Status: 
+            <span [ngClass]="{ 'available': home.available, 'booked': !home.available }">
+              {{ home.available ? 'Available' : 'Booked' }}
+            </span>
+          </p>
+
+
+          <button 
+            [disabled]="!home.available" 
+            (click)="openBooking(home)"
+          >
+            {{ home.available ? 'Book Now' : 'Already Booked' }}
+          </button>
         </div>
       </div>
     }
   </div>
+
   <button class="view-more">View More</button>
+
+  <!-- Popup Booking Form -->
+  @if (showForm) {
+    <div class="modal-overlay">
+      <div class="modal-content">
+        <app-booking-form
+          *ngIf="showForm"
+          [home]="selectedHome"
+          (close)="closeBooking()"
+          (bookingConfirmed)="markHomeAsBooked($event)">
+        </app-booking-form>
+
+      </div>
+    </div>
+  }
 </section>
+

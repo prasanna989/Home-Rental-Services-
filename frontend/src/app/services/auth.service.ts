@@ -80,6 +80,8 @@ export class AuthService {
     if (user) {
       this.isAuthenticated.set(true);
       this.currentUser.set(user);
+      localStorage.setItem('loggedInUser', JSON.stringify(user));
+
       this.notification.success('Login successful!');
       this.router.navigate(['/']);
       return true;
@@ -112,6 +114,9 @@ export class AuthService {
   logout(): void {
     this.isAuthenticated.set(false);
     this.currentUser.set(null);
+
+    localStorage.removeItem('loggedInUser');
+    
     this.notification.info('You have been logged out.');
     this.router.navigate(['/login']);
   }
@@ -175,4 +180,9 @@ export class AuthService {
     }
     return false;
   }
+  isLoggedIn(): boolean {
+  return !!localStorage.getItem('loggedInUser');
+}
+
+  
 }
