@@ -1,0 +1,71 @@
+<div class="property-details-container" [class.compact]="compactView" *ngIf="property && !loading">
+  <!-- Header -->
+  <div class="property-header">
+    <h1>{{ property.title }}</h1>
+    <div class="property-meta">
+      <span class="location">
+        <mat-icon>location_on</mat-icon>
+        {{ property.location }}
+      </span>
+      <span class="type">{{ property.type }}</span>
+      <span class="price">₹{{ property.price | number }}</span>
+    </div>
+  </div>
+
+  <!-- Content -->
+  <div class="property-content">
+    <!-- Image -->
+    <div class="image-gallery">
+      <img [src]="property.imageUrl" [alt]="property.title" class="main-image" />
+    </div>
+
+    <!-- Info -->
+    <div class="property-info">
+      <!-- Amenities -->
+      <div class="amenities-section">
+        <h3>Amenities</h3>
+        <div class="amenities-list">
+          <div *ngFor="let amenity of property.amenities" class="amenity-item">
+            <mat-icon>check_circle</mat-icon>
+            <span>{{ amenity }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Actions -->
+      <div class="action-buttons">
+        <button
+          mat-raised-button
+          color="primary"
+          (click)="bookNow()"
+          [disabled]="!property.available"
+          class="book-button"
+        >
+          {{ property.available ? 'Book Now' : 'Already Booked' }}
+        </button>
+        <button
+          mat-button
+          color="accent"
+          (click)="toggleFavorite()"
+          class="favorite-button"
+        >
+          <mat-icon>{{ isFavorite ? 'favorite' : 'favorite_border' }}</mat-icon>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Loading -->
+<div *ngIf="loading" class="loading-spinner">
+  <mat-spinner diameter="40"></mat-spinner>
+  <span>Loading property details...</span>
+</div>
+
+<!-- Not Found -->
+<div *ngIf="!property && !loading" class="not-found">
+  <mat-icon class="error-icon">error_outline</mat-icon>
+  <h2>Property not found</h2>
+  <p>The property you're looking for doesn't exist or may have been removed.</p>
+  <a mat-raised-button color="primary" routerLink="/browse-home">Browse Available Properties</a>
+</div>

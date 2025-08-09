@@ -83,7 +83,7 @@
       <div class="favorites-list">
         @for (propertyId of authService.currentUser()!.favorites; track propertyId) {
           <div class="favorite-item">
-            <app-property-preview [propertyId]="propertyId"></app-property-preview>
+            <app-property-details [propertyId]="propertyId" [compactView]="true"></app-property-details>
             <button (click)="removeFavorite(propertyId)" class="remove-favorite">Remove</button>
           </div>
         }
@@ -94,15 +94,25 @@
       </div>
     }
   </div>
+
   <div class="booked-section">
     <h2>Your Booked Homes</h2>
-    <div *ngFor="let home of bookedHomes" class="booked-home">
-      <h3>{{ home.title }}</h3>
-      <img [src]="home.imageUrl" alt="Home" />
-      <p>Price: ₹{{ home.price }}</p>
-      <p>Status: <span class="booked-flag">Booked</span></p>
-    </div>
-
-</div>
-
+    @if (bookedHomes.length > 0) {
+      <div class="booked-list">
+        @for (home of bookedHomes; track home.id) {
+          <div class="booked-card">
+            <app-property-details [propertyId]="home.id" [compactView]="true"></app-property-details>
+            <button (click)="cancelBooking(home)" class="cancel-button">
+              Cancel Booking
+            </button>
+          </div>
+        }
+      </div>
+    } @else {
+      <div class="no-bookings">
+        <p>You haven't booked any properties yet.</p>
+        <a (click)="navigateToHome()" class="explore-button">Explore Properties</a>
+      </div>
+    }
+  </div>
 </div>

@@ -2,18 +2,18 @@ import { Component, inject } from '@angular/core';
 import { AuthService } from '../../services/auth.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { PropertyPreview } from '../../components/property-preview/property-preview';
+import { PropertyDetails } from '../property-details/property-details';
 import { Home } from '../../models/home.model';
 import { HomeService } from '../../services/home.service';
-
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-profile',
-  imports: [CommonModule, FormsModule, PropertyPreview],
+  standalone: true,
+  imports: [CommonModule, FormsModule, PropertyDetails],
   templateUrl: './profile.html',
-  styleUrl: './profile.css'
+  styleUrls: ['./profile.css']
 })
-
 export class Profile {
   authService = inject(AuthService);
   isEditing = false;
@@ -21,19 +21,31 @@ export class Profile {
   selectedFile: File | null = null;
   previewImageUrl: string | null = null;
   bookedHomes: Home[] = [];
-  constructor(private homeService: HomeService) {}
+  
+  constructor(
+    private homeService: HomeService,
+    private router: Router
+  ) {}
 
   ngOnInit() {
     this.resetEditForm();
     this.loadBookedHomes();
-    this.bookedHomes = this.homeService.getBookedHomes();
   }
 
   loadBookedHomes() {
-    const stored = localStorage.getItem('bookedHomes');
-    this.bookedHomes = stored ? JSON.parse(stored) : [];
+    this.bookedHomes = this.homeService.getBookedHomes();
   }
 
+  cancelBooking(home: Home) {
+    if (confirm('Are you sure you want to cancel this booking?')) {
+      this.homeService.cancelBooking(home.id);
+      this.bookedHomes = this.bookedHomes.filter(h => h.id !== home.id);
+    }
+  }
+
+  navigateToHome() {
+    this.router.navigate(['/']);
+  }
 
   toggleEdit() {
     this.isEditing = !this.isEditing;

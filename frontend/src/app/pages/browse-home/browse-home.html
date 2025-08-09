@@ -1,15 +1,33 @@
-<div class="browse-home-container">
-  <div class="home-list">
-    <div *ngFor="let home of homes" class="home-card">
-      <div class="home-image-section">
-        <img [src]="home.imageUrl" alt="{{ home.title }}" class="home-image" />
+
+<div class="browse-container">
+  <div class="header-section">
+    <h1 class="page-title">Discover Your Perfect Home</h1>
+    <p class="page-subtitle">Explore our curated selection of premium properties</p>
+  </div>
+
+  <div class="properties-grid">
+    <div *ngFor="let home of homes" class="property-card">
+      <div class="image-container">
+        <img [src]="home.imageUrl" alt="{{ home.title }}" class="property-image" />
+        <div class="property-badge">{{ home.type }}</div>
+        <div class="price-tag">₹{{ home.price | number }}</div>
       </div>
-      <div class="home-info-section">
-        <h3>{{ home.title }}</h3>
-        <p><strong>Location:</strong> {{ home.location }}</p>
-        <p><strong>Type:</strong> {{ home.type }}</p>
-        <p><strong>Price:</strong> ₹{{ home.price }}</p>
-        <p><strong>Amenities:</strong> {{ home.amenities.join(', ') }}</p>
+      
+      <div class="property-details">
+        <h3 class="property-title">{{ home.title }}</h3>
+        <div class="location-section">
+          <mat-icon class="location-icon">location_on</mat-icon>
+          <span>{{ home.location }}</span>
+        </div>
+        
+        <div class="amenities-section">
+          <div *ngFor="let amenity of home.amenities.slice(0, 3)" class="amenity-pill">
+            {{ amenity }}
+          </div>
+          <div *ngIf="home.amenities.length > 3" class="amenity-pill more-count">
+            +{{ home.amenities.length - 3 }}
+          </div>
+        </div>
       </div>
     </div>
   </div>
