@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { PropertyPreview } from './property-preview';
+import { PropertyDetails } from './property-details';
 
-describe('PropertyPreview', () => {
-  let component: PropertyPreview;
-  let fixture: ComponentFixture<PropertyPreview>;
+describe('PropertyDetails', () => {
+  let component: PropertyDetails;
+  let fixture: ComponentFixture<PropertyDetails>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [PropertyPreview]
+      imports: [PropertyDetails]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(PropertyPreview);
+    fixture = TestBed.createComponent(PropertyDetails);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

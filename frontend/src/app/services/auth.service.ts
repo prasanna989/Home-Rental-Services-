@@ -10,7 +10,7 @@ interface User {
   bio?: string;
   dateOfBirth?: Date | string;
   profileImageUrl?: string;
-  favorites?: number[]; // Array of property IDs
+  favorites: number[]; // Changed to required property with default empty array
 }
 
 interface PropertyListing {
@@ -40,30 +40,7 @@ export class AuthService {
   ];
 
   private propertyListings: PropertyListing[] = [
-    {
-      id: 1,
-      title: '2BHK in Bangalore',
-      location: 'Whitefield',
-      owner: 'user@example.com',
-      postedAt: new Date('2025-07-20T09:30:00'),
-      status: 'Active'
-    },
-    {
-      id: 2,
-      title: 'Studio Apartment',
-      location: 'Hyderabad',
-      owner: 'user@example.com',
-      postedAt: new Date('2025-07-19T17:00:00'),
-      status: 'Flagged'
-    },
-    {
-      id: 3,
-      title: '3BHK Villa',
-      location: 'Chennai',
-      owner: 'user@example.com',
-      postedAt: new Date('2025-07-18T14:45:00'),
-      status: 'Pending'
-    }
+    // ... (keep your existing property listings)
   ];
 
   isAuthenticated = signal(false);
@@ -74,7 +51,9 @@ export class AuthService {
     private notification: NotificationService
   ) {}
 
-  // Existing methods
+  
+  
+
   login(email: string, password: string): boolean {
     const user = this.users.find(u => u.email === email && u.password === password);
     if (user) {
@@ -103,7 +82,7 @@ export class AuthService {
       password, 
       phone,
       profileImageUrl: 'assets/default-profile.png',
-      favorites: []
+      favorites: [] 
     };
     
     this.users.push(newUser);
@@ -145,7 +124,6 @@ export class AuthService {
   addFavoriteProperty(propertyId: number): void {
     const user = this.currentUser();
     if (user) {
-      user.favorites = user.favorites || [];
       if (!user.favorites.includes(propertyId)) {
         user.favorites.push(propertyId);
         this.currentUser.set({...user});
@@ -157,7 +135,7 @@ export class AuthService {
 
   removeFavoriteProperty(propertyId: number): void {
     const user = this.currentUser();
-    if (user?.favorites) {
+    if (user) {
       user.favorites = user.favorites.filter(id => id !== propertyId);
       this.currentUser.set({...user});
       this.updateProfile(user);

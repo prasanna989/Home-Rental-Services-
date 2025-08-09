@@ -1,147 +1,445 @@
 .profile-container {
-  max-width: 800px;
+  max-width: 1100px;
   margin: 2rem auto;
   padding: 2rem;
   background: white;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 .profile-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 2rem;
+  margin-bottom: 2.5rem;
+  padding-bottom: 1.2rem;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.profile-header h2 {
+  margin: 0;
+  font-size: 2rem;
+  color: #2c3e50;
+  font-weight: 600;
 }
 
 .profile-content {
   display: flex;
   gap: 3rem;
-  margin-bottom: 3rem;
+  margin-bottom: 4rem;
 }
 
 .profile-image-section {
-  flex: 0 0 200px;
+  flex: 0 0 220px;
   display: flex;
   flex-direction: column;
   align-items: center;
 }
 
 .profile-image {
-  width: 150px;
-  height: 150px;
+  width: 200px;
+  height: 200px;
   border-radius: 50%;
   object-fit: cover;
-  border: 3px solid #eee;
-  margin-bottom: 1rem;
+  border: 5px solid #f8f8f8;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  margin-bottom: 1.8rem;
+  transition: all 0.3s ease;
+}
+
+.profile-image:hover {
+  transform: scale(1.03);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
 }
 
 .image-upload {
-  margin-top: 0.5rem;
+  margin-top: 1.2rem;
+  position: relative;
+}
+
+.image-upload input[type="file"] {
+  position: absolute;
+  opacity: 0;
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+}
+
+.image-upload::before {
+  content: 'Change Photo';
+  display: inline-block;
+  padding: 0.6rem 1.2rem;
+  background-color: #3498db;
+  color: white;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.image-upload:hover::before {
+  background-color: #2980b9;
+  transform: translateY(-1px);
 }
 
 .profile-details {
   flex: 1;
+  padding: 0.5rem;
 }
 
 .detail-item {
-  margin-bottom: 1.5rem;
+  margin-bottom: 1.8rem;
+  padding-bottom: 1.2rem;
+  border-bottom: 1px solid #f5f5f5;
+}
+
+.detail-item:last-child {
+  border-bottom: none;
 }
 
 .detail-item label {
-  font-weight: bold;
+  font-weight: 600;
+  color: #555;
   display: block;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.6rem;
+  font-size: 1rem;
+}
+
+.detail-item span, .detail-item p {
+  color: #333;
+  font-size: 1.1rem;
+}
+
+.detail-item p {
+  margin: 0.6rem 0 0;
+  line-height: 1.6;
+  color: #555;
+}
+
+.edit-form {
+  background: #f9f9f9;
+  padding: 2rem;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
 .edit-form .form-group {
-  margin-bottom: 1.5rem;
+  margin-bottom: 1.8rem;
 }
 
 .edit-form label {
   display: block;
-  margin-bottom: 0.5rem;
-  font-weight: bold;
+  margin-bottom: 0.6rem;
+  font-weight: 600;
+  color: #555;
+  font-size: 1rem;
 }
 
 .edit-form input,
 .edit-form textarea {
   width: 100%;
-  padding: 0.5rem;
+  padding: 0.85rem;
   border: 1px solid #ddd;
-  border-radius: 4px;
+  border-radius: 8px;
+  font-size: 1.05rem;
+  transition: all 0.2s ease;
+  background: white;
+}
+
+.edit-form input:focus,
+.edit-form textarea:focus {
+  border-color: #3498db;
+  box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+  outline: none;
 }
 
 .edit-form textarea {
-  min-height: 100px;
+  min-height: 140px;
+  resize: vertical;
 }
 
 button {
-  padding: 0.5rem 1rem;
-  background-color: #4CAF50;
-  color: white;
+  padding: 0.8rem 1.6rem;
   border: none;
-  border-radius: 4px;
+  border-radius: 8px;
+  font-weight: 600;
   cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 1rem;
 }
 
-button:hover {
-  background-color: #45a049;
+button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
 }
 
 .edit-button {
-  background-color: #2196F3;
+  background-color: #3498db;
+  color: white;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
 }
 
 .edit-button:hover {
-  background-color: #0b7dda;
+  background-color: #2980b9;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
 }
 
 .save-button {
-  background-color: #4CAF50;
+  background-color: #2ecc71;
+  color: white;
+  margin-top: 0.5rem;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
 }
 
 .save-button:hover {
-  background-color: #45a049;
+  background-color: #27ae60;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
 }
 
+/* Favorites Section - Updated */
 .favorites-section {
-  margin-top: 3rem;
-  padding-top: 2rem;
-  border-top: 1px solid #eee;
+  margin-top: 4rem;
+  padding-top: 2.5rem;
+  border-top: 1px solid #eaeaea;
+}
+
+.favorites-section h3 {
+  margin-bottom: 2rem;
+  color: #2c3e50;
+  font-size: 1.6rem;
+  font-weight: 600;
 }
 
 .favorites-list {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-  gap: 1.5rem;
-  margin-top: 1.5rem;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 2rem;
+  margin-top: 1rem;
 }
 
 .favorite-item {
-  position: relative;
-  border: 1px solid #eee;
-  border-radius: 8px;
+  background: white;
+  border-radius: 12px;
   overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease;
+  border: 1px solid #e0e0e0;
+}
+
+.favorite-item:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+}
+
+.favorite-content {
+  padding: 1.8rem;
+}
+
+.favorite-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 1.8rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid #eee;
+}
+
+.book-now-btn {
+  padding: 0.7rem 1.4rem;
+  background-color: #3498db;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.book-now-btn:hover {
+  background-color: #2980b9;
+  transform: translateY(-2px);
 }
 
 .remove-favorite {
-  position: absolute;
-  top: 0.5rem;
-  right: 0.5rem;
-  background-color: #f44336;
-  padding: 0.3rem 0.6rem;
-  font-size: 0.8rem;
+  background: none;
+  border: none;
+  color: #e74c3c;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0.7rem;
+  transition: all 0.2s ease;
+}
+
+.remove-favorite:hover {
+  color: #c0392b;
+  transform: translateY(-2px);
 }
 
 .no-favorites {
-  color: #666;
-  font-style: italic;
   text-align: center;
-  padding: 1rem;
+  padding: 3rem;
+  background: #f9f9f9;
+  border-radius: 10px;
+  color: #7f8c8d;
+  font-size: 1.1rem;
 }
 
-.booked-flag {
-  color: red;
-  font-weight: bold;
+.no-favorites p {
+  margin-bottom: 1.8rem;
+}
+
+/* Booked Section */
+.booked-section {
+  margin-top: 4rem;
+  padding-top: 2.5rem;
+  border-top: 1px solid #eaeaea;
+}
+
+.booked-section h2 {
+  margin-bottom: 2rem;
+  color: #2c3e50;
+  font-size: 1.6rem;
+  font-weight: 600;
+}
+
+.booked-list {
+  display: grid;
+  gap: 2rem;
+}
+
+.booked-card {
+  display: flex;
+  border: 1px solid #e0e0e0;
+  border-radius: 12px;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  background: white;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.booked-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+}
+
+.cancel-button {
+  background: linear-gradient(90deg, #e74c3c, #c0392b);
+  color: white;
+  padding: 10px 18px;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 8px rgba(231, 76, 60, 0.25);
+  height: auto;
+  white-space: nowrap;
+}
+
+.cancel-button:hover {
+  background: linear-gradient(90deg, #c0392b, #a93226);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(192, 57, 43, 0.35);
+}
+
+.cancel-button:active {
+  transform: translateY(0);
+  box-shadow: 0 3px 6px rgba(192, 57, 43, 0.25);
+}
+
+
+.no-bookings {
+  text-align: center;
+  padding: 3rem;
+  background: #f9f9f9;
+  border-radius: 10px;
+}
+
+.no-bookings p {
+  color: #7f8c8d;
+  font-size: 1.1rem;
+  margin-bottom: 1.8rem;
+}
+
+.explore-button {
+  display: inline-block;
+  padding: 0.9rem 1.8rem;
+  background-color: #3498db;
+  color: white;
+  text-decoration: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-weight: 600;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.explore-button:hover {
+  background-color: #2980b9;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+}
+
+/* Responsive Design */
+@media (max-width: 900px) {
+  .profile-container {
+    padding: 1.8rem;
+  }
+  
+  .profile-content {
+    flex-direction: column;
+    gap: 2.5rem;
+  }
+  
+  .profile-image-section {
+    flex: 0 0 auto;
+    margin-bottom: 1.5rem;
+  }
+  
+  .favorites-list {
+    grid-template-columns: 1fr;
+  }
+  
+  .booked-card {
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 600px) {
+  .profile-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1.2rem;
+  }
+  
+  .profile-image {
+    width: 160px;
+    height: 160px;
+  }
+  
+  .edit-form {
+    padding: 1.5rem;
+  }
+  
+  button {
+    width: 100%;
+    padding: 1rem;
+  }
+  
+  .favorite-actions {
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
+  .book-now-btn, .remove-favorite {
+    width: 100%;
+    text-align: center;
+  }
 }

@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Home } from '../models/home.model';
 import { FilterOptions } from '../models/filter-options.model';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Injectable({
   providedIn: 'root',
@@ -97,9 +98,9 @@ export class HomeService {
     }
   ];
 
-  constructor() {
-    console.log('HomeService loaded');
-  }
+  private bookedHomes: Home[] = [];
+
+  constructor(private snackBar: MatSnackBar) {}
 
   getHomes(): Home[] {
     return this.homes;
@@ -136,22 +137,50 @@ export class HomeService {
       );
     });
   }
+
   updateHomeStatus(id: number, status: boolean): void {
     const home = this.homes.find(h => h.id === id);
     if (home) {
       home.available = status;
     }
   }
-  // Add this in HomeService
-  bookedHomes: Home[] = [];
 
-  addBooking(home: Home) {
-    home.available = false;
-    this.bookedHomes.push(home);
+  addBooking(home: Home): {success: boolean, message: string} {
+    const homeToBook = this.getHomeById(home.id);
+    
+    if (!homeToBook) {
+      return {success: false, message: 'Property not found'};
+    }
+
+    if (!homeToBook.available) {
+      return {success: false, message: 'Property is already booked'};
+    }
+
+    homeToBook.available = false;
+    this.bookedHomes.push({...homeToBook});
+    
+    this.snackBar.open(`Successfully booked ${homeToBook.title}!`, 'Close', {
+      duration: 3000,
+      panelClass: ['success-snackbar']
+    });
+    
+    return {success: true, message: 'Booking successful'};
   }
 
   getBookedHomes(): Home[] {
     return this.bookedHomes;
+  }
+
+  cancelBooking(homeId: number): void {
+    const bookingIndex = this.bookedHomes.findIndex(h => h.id === homeId);
+    if (bookingIndex !== -1) {
+      this.bookedHomes.splice(bookingIndex, 1);
+      this.updateHomeStatus(homeId, true);
+    }
+  }
+
+  getPropertyDetails(id: number): Home | undefined {
+    return this.homes.find(h => h.id === id);
   }
 
   addHome(newHome: Home): void {
@@ -164,13 +193,18 @@ export class HomeService {
 
   removeHome(id: number): void {
     this.homes = this.homes.filter(home => home.id !== id);
+    this.bookedHomes = this.bookedHomes.filter(home => home.id !== id);
   }
 
-  updateHome(updated: Home): void {
-    const index = this.homes.findIndex(h => h.id === updated.id);
+  updateHome(updatedHome: Home): void {
+    const index = this.homes.findIndex(h => h.id === updatedHome.id);
     if (index !== -1) {
-      this.homes[index] = { ...updated };
+      this.homes[index] = {...updatedHome};
+    }
+    
+    const bookedIndex = this.bookedHomes.findIndex(h => h.id === updatedHome.id);
+    if (bookedIndex !== -1) {
+      this.bookedHomes[bookedIndex] = {...updatedHome};
     }
   }
 }
-

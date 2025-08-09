@@ -39,5 +39,10 @@ export const routes: Routes = [
     path: 'browse-home',
     loadComponent: () => import('./pages/browse-home/browse-home').then(m => m.BrowseHome),
     title: 'Browse Home'
+  },
+  {
+    path: 'property/:id',
+    loadComponent: () => import('./pages/property-details/property-details').then(m => m.PropertyDetails),
+    title: 'Property Details'
   }
 ];
