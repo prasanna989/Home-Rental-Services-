@@ -1,106 +1,149 @@
 <div class="dashboard-container">
   <aside class="sidebar">
     <h2>Admin Dashboard</h2>
-    <form (ngSubmit)="addProperty()" #form="ngForm" class="sticky-form grid grid-cols-1 gap-2">
+    <form (ngSubmit)="addProperty()" #form="ngForm" class="sticky-form grid grid-cols-1 gap-2" enctype="multipart/form-data">
       <input type="text" [(ngModel)]="newProperty.title" name="title" placeholder="Title" required>
       <input type="text" [(ngModel)]="newProperty.type" name="type" placeholder="Type" required>
       <input type="number" [(ngModel)]="newProperty.price" name="price" placeholder="(Price/Month)" required>
       <input type="number" [(ngModel)]="newProperty.rentPerDay" name="rentPerDay" placeholder="(Rent/Day)" required>
       <input type="text" [(ngModel)]="newProperty.location" name="location" placeholder="Location" required>
 
-      <input type="file" (change)="onFileSelected($event)" required>
+      <div class="file-upload-container">
+        <label class="file-upload-label">
+          <input type="file" (change)="onFileSelected($event)" name="image" required>
+          <span class="file-upload-button">Choose Image</span>
+          <span class="file-upload-name">{{selectedFile?.name || 'No file chosen'}}</span>
+        </label>
+      </div>
       <img *ngIf="newProperty.imageUrl" [src]="newProperty.imageUrl" width="100" class="mt-2">
 
       <!-- Amenity Input -->
-      <input
-        type="text"
-        [(ngModel)]="newAmenity"
-        name="newAmenity"
-        placeholder="Add Amenity"
-        (keydown.enter)="$event.preventDefault(); addAmenity()"
-        class="amenity-input"
-      />
+      <div class="amenity-section">
+        <input
+          type="text"
+          [(ngModel)]="newAmenity"
+          name="newAmenity"
+          placeholder="Add Amenity"
+          (keydown.enter)="$event.preventDefault(); addAmenity()"
+          class="amenity-input"
+        />
 
-      <!-- Add Amenity Button -->
-      <button type="button" (click)="addAmenity()" style="background-color: #4CAF50; color: white; padding: 6px 12px; border: none; border-radius: 5px; font-weight: 650;">
-      Add Amenity
-      </button>
+        <!-- Add Amenity Button -->
+        <button type="button" (click)="addAmenity()" class="add-amenity-btn">
+          Add Amenity
+        </button>
 
-      <!-- Amenity Tags -->
-      <div>
-        <span *ngFor="let amenity of newProperty.amenities" class="mr-2 badge">
-          {{ amenity }}
-          <button type="button" (click)="removeAmenity(newProperty.amenities.indexOf(amenity))" class="remove-amenity-btn">x</button>
-        </span>
+        <!-- Amenity Tags -->
+        <div class="amenity-tags">
+          <span *ngFor="let amenity of newProperty.amenities; let i = index" class="amenity-tag">
+            {{ amenity }}
+            <button type="button" (click)="removeAmenity(i)" class="remove-amenity-btn">×</button>
+          </span>
+        </div>
       </div>
 
-      <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded mt-2">Add Property</button>
+      <button type="submit" class="submit-btn">Add Property</button>
     </form>
   </aside>
 
   <main class="main-content">
     <h3 class="text-xl font-bold mb-4">Property List</h3>
-    <table class="property-table min-w-full bg-white border">
-      <thead>
-        <tr>
-          <th class="border px-4 py-2">Image</th>
-          <th class="border px-4 py-2">Title</th>
-          <th class="border px-4 py-2">Type</th>
-          <th class="border px-4 py-2">Price/Month</th>
-          <th class="border px-4 py-2">Rent/Day</th>
-          <th class="border px-4 py-2">Location</th>
-          <th class="border px-4 py-2">Amenities</th>
-          <th class="border px-4 py-2">Status</th>
-          <th class="border px-4 py-2">Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-        <ng-container *ngFor="let home of homes">
+    <div class="table-container">
+      <table class="property-table min-w-full bg-white border">
+        <thead>
           <tr>
-            <td class="border px-4 py-2"><img [src]="home.imageUrl" [alt]="home.title" width="100" /></td>
-            <td class="border px-4 py-2">{{ home.title }}</td>
-            <td class="border px-4 py-2">{{ home.type }}</td>
-            <td class="border px-4 py-2">₹{{ home.price }}</td>
-            <td class="border px-4 py-2">₹{{ home.rentPerDay }}</td>
-            <td class="border px-4 py-2">{{ home.location }}</td>
-            <td class="border px-4 py-2">{{ home.amenities.join(', ') }}</td>
-            <td class="border px-4 py-2">
-              <span *ngIf="home.available" class="status available">Available</span>
-              <span *ngIf="!home.available" class="status unavailable">Unavailable</span>
-            </td>
-            <td class="action-cell">
-              <div class="action-buttons">
-                <button class="edit-btn" (click)="editProperty(home)">Edit</button>
-                <button class="remove-btn" (click)="removeProperty(home.id)">Remove</button>
-              </div>
-            </td>
+            <th class="border px-4 py-2">Image</th>
+            <th class="border px-4 py-2">Title</th>
+            <th class="border px-4 py-2">Type</th>
+            <th class="border px-4 py-2">Price/Month</th>
+            <th class="border px-4 py-2">Rent/Day</th>
+            <th class="border px-4 py-2">Location</th>
+            <th class="border px-4 py-2">Amenities</th>
+            <th class="border px-4 py-2">Status</th>
+            <th class="border px-4 py-2">Actions</th>
           </tr>
+        </thead>
+        <tbody>
+          <ng-container *ngFor="let home of homes">
+            <tr>
+              <td class="border px-4 py-2"><img [src]="home.imageUrl" [alt]="home.title" width="100" /></td>
+              <td class="border px-4 py-2">{{ home.title }}</td>
+              <td class="border px-4 py-2">{{ home.type }}</td>
+              <td class="border px-4 py-2">₹{{ home.price }}</td>
+              <td class="border px-4 py-2">₹{{ home.rentPerDay }}</td>
+              <td class="border px-4 py-2">{{ home.location }}</td>
+              <td class="border px-4 py-2">
+                <div class="amenities-list">
+                  <span *ngFor="let amenity of home.amenities" class="amenity-badge">{{ amenity }}</span>
+                </div>
+              </td>
+              <td class="border px-4 py-2">
+                <span [class.available]="home.available" [class.unavailable]="!home.available" class="status">
+                  {{ home.available ? 'Available' : 'Unavailable' }}
+                </span>
+              </td>
+              <td class="border px-4 py-2 action-cell">
+                <div class="action-buttons">
+                  <button class="edit-btn" (click)="editProperty(home)">Edit</button>
+                  <button class="remove-btn" (click)="removeProperty(home._id)">Remove</button>
+                </div>
+              </td>
+            </tr>
 
-          <!-- Edit Row -->
-          <tr *ngIf="editingProperty?.id === home.id" class="edit-row">
-            <td colspan="9" class="border px-4 py-2">
-              <form *ngIf="editingProperty" (ngSubmit)="saveChanges()" #editForm="ngForm" class="inline-edit-form grid grid-cols-2 gap-2">
-                <input type="text" [(ngModel)]="editingProperty.title" name="editTitle{{home.id}}" required />
-                <input type="text" [(ngModel)]="editingProperty.type" name="editType{{home.id}}" required />
-                <input type="number" [(ngModel)]="editingProperty.price" name="editPrice{{home.id}}" required />
-                <input type="number" [(ngModel)]="editingProperty.rentPerDay" name="editRentPerDay{{home.id}}" required />
-                <input type="text" [(ngModel)]="editingProperty.location" name="editLocation{{home.id}}" required />
+            <!-- Edit Row -->
+            <tr *ngIf="editingProperty?._id === home._id" class="edit-row">
+              <td colspan="9" class="border px-4 py-2">
+                <form *ngIf="editingProperty" (ngSubmit)="saveChanges()" #editForm="ngForm" class="inline-edit-form grid grid-cols-2 gap-2" enctype="multipart/form-data">
+                  <input type="text" [(ngModel)]="editingProperty.title" name="editTitle{{home._id}}" required />
+                  <input type="text" [(ngModel)]="editingProperty.type" name="editType{{home._id}}" required />
+                  <input type="number" [(ngModel)]="editingProperty.price" name="editPrice{{home._id}}" required />
+                  <input type="number" [(ngModel)]="editingProperty.rentPerDay" name="editRentPerDay{{home._id}}" required />
+                  <input type="text" [(ngModel)]="editingProperty.location" name="editLocation{{home._id}}" required />
 
-                <select [(ngModel)]="editingProperty.available" name="editAvailable{{home.id}}" required>
-                  <option [ngValue]="true">Available</option>
-                  <option [ngValue]="false">Unavailable</option>
-                </select>
+                  <select [(ngModel)]="editingProperty.available" name="editAvailable{{home._id}}" required>
+                    <option [ngValue]="true">Available</option>
+                    <option [ngValue]="false">Unavailable</option>
+                  </select>
 
-                <input type="file" (change)="onEditFileSelected($event)">
-                <img *ngIf="editingProperty.imageUrl" [src]="editingProperty.imageUrl" width="100" class="mt-2">
+                  <div class="file-upload-container">
+                    <label class="file-upload-label">
+                      <input type="file" (change)="onEditFileSelected($event)" name="image">
+                      <span class="file-upload-button">Change Image</span>
+                      <span class="file-upload-name">{{selectedEditFile?.name || 'Keep current'}}</span>
+                    </label>
+                  </div>
+                  <img *ngIf="editingProperty.imageUrl" [src]="editingProperty.imageUrl" width="100" class="mt-2">
 
-                <button type="submit" class="btn-green">Save</button>
-                <button type="button" class="btn-green ml-4" (click)="cancelEdit()">Cancel</button>
-              </form>
-            </td>
-          </tr>
-        </ng-container>
-      </tbody>
-    </table>
+                  <div class="amenity-section">
+                    <input
+                      type="text"
+                      [(ngModel)]="newAmenity"
+                      name="editAmenity{{home._id}}"
+                      placeholder="Add Amenity"
+                      (keydown.enter)="$event.preventDefault(); addAmenityToEdit()"
+                      class="amenity-input"
+                    />
+                    <button type="button" (click)="addAmenityToEdit()" class="add-amenity-btn">
+                      Add Amenity
+                    </button>
+                    <div class="amenity-tags">
+                      <span *ngFor="let amenity of editingProperty.amenities; let i = index" class="amenity-tag">
+                        {{ amenity }}
+                        <button type="button" (click)="removeEditAmenity(i)" class="remove-amenity-btn">×</button>
+                      </span>
+                    </div>
+                  </div>
+
+                  <div class="edit-actions">
+                    <button type="submit" class="btn-green">Save</button>
+                    <button type="button" class="btn-cancel" (click)="cancelEdit()">Cancel</button>
+                  </div>
+                </form>
+              </td>
+            </tr>
+          </ng-container>
+        </tbody>
+      </table>
+    </div>
   </main>
 </div>

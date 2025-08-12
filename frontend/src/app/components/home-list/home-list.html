@@ -1,7 +1,7 @@
 <section class="home-list">
   <h2>Featured Homes</h2>
   <div class="homes-container">
-    @for (home of homes; track home.id) {
+    @for (home of homes; track home._id) {
       <div class="home-card">
         <img [src]="home.imageUrl" [alt]="home.title">
         <div class="home-info">

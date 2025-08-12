@@ -1,32 +1,36 @@
-import { Component, inject, ViewChild } from '@angular/core';
-import { Header } from '../../components/header/header';
-import { HomeList } from '../../components/home-list/home-list';
-import { Footer } from '../../components/footer/footer';
-import { Navbar } from '../../components/navbar/navbar';
-import { SearchFilter } from '../../components/search-filter/search-filter';
-import { CommonModule } from '@angular/common';
+import { Component, inject, ViewChild, signal, Inject, PLATFORM_ID } from '@angular/core';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { HomeService } from '../../services/home.service';
 import { FilterService } from '../../services/filter.service';
+import { map, switchMap } from 'rxjs/operators';
+import { HomeList } from '../../components/home-list/home-list';
+import { Header } from '../../components/header/header';
+import { Footer } from '../../components/footer/footer';
+import { Navbar } from '../../components/navbar/navbar';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { map } from 'rxjs/operators';
+import { Home as HomeModel } from '../../models/home.model';
+
 
 @Component({
   selector: 'app-home',
-  imports: [CommonModule, Header, HomeList, Footer, HomeList],
+  standalone: true,
+  imports: [CommonModule, Header, HomeList, Footer],
   templateUrl: './home.html',
   styleUrl: './home.css'
 })
-export class Home {
-@ViewChild(Navbar) navbar!: Navbar;
+export class HomePage {
+  @ViewChild(Navbar) navbar!: Navbar;
   homeService = inject(HomeService);
   filterService = inject(FilterService);
   
   filteredHomes = toSignal(
     this.filterService.filters$.pipe(
-      map(filters => this.homeService.getFilteredHomes(filters))
+      switchMap(filters => this.homeService.getFilteredHomes(filters))
     ),
-    { initialValue: this.homeService.getFilteredHomes(this.filterService.filters) }
+    { initialValue: [] as HomeModel[] }
   );
+
+  constructor(@Inject(PLATFORM_ID) private platformId: Object) {}
 
   filterByType(type: string) {
     this.filterService.updateFilters({
@@ -43,14 +47,14 @@ export class Home {
       amenities: []
     });
   }
-  bookHome(homeId: number) {
-  const bookings = JSON.parse(localStorage.getItem('bookedHomes') || '[]');
 
-  if (!bookings.includes(homeId)) {
-    bookings.push(homeId);
-    localStorage.setItem('bookedHomes', JSON.stringify(bookings));
+  bookHome(homeId: string) {
+    if (isPlatformBrowser(this.platformId)) {
+      const bookings = JSON.parse(localStorage.getItem('bookedHomes') || '[]');
+      if (!bookings.includes(homeId)) {
+        bookings.push(homeId);
+        localStorage.setItem('bookedHomes', JSON.stringify(bookings));
+      }
+    }
   }
-
-}
-
 }

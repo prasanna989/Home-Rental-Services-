@@ -1,14 +1,12 @@
 export interface Home {
-  id: number;
+  _id: string;
   title: string;
-  type: string;         
+  type: string;
   price: number;
+  rentPerDay: number;
   location: string;
   available: boolean;
   imageUrl: string;
   amenities: string[];
-  rentPerDay: number;    
-}
-export interface HomeList {
-  homes: Home[];
+  cloudinaryId?: string;
 }
