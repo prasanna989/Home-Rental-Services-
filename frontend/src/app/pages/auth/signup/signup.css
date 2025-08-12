@@ -14,7 +14,6 @@
   padding: 2rem;
   width: 100%;
   max-width: 400px;
-  margin: 3rem auto;
 }
 
 .auth-card h2 {
@@ -41,6 +40,17 @@
   font-size: 1rem;
 }
 
+/* Validation feedback */
+input.invalid {
+  border: 2px solid #e74c3c;
+  background-color: #fdecea;
+}
+
+input.valid {
+  border: 2px solid #2ecc71;
+  background-color: #ecfdf0;
+}
+
 .auth-button {
   width: 100%;
   padding: 0.75rem;
@@ -57,11 +67,10 @@
   background-color: #45a049;
 }
 
-.error-text {
+.error-message {
+  font-size: 0.9rem;
   color: #e74c3c;
-  margin-bottom: 1rem;
-  text-align: center;
-  display:block;
+  margin-top: 4px;
 }
 
 .auth-footer {

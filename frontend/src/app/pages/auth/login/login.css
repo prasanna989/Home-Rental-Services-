@@ -71,3 +71,22 @@
   color: #4CAF50;
   text-decoration: none;
 }
+
+/* Existing styles here */
+
+/* Field validation feedback */
+input.invalid {
+  border: 2px solid #e74c3c;
+  background-color: #fdecea;
+}
+
+input.valid {
+  border: 2px solid #2ecc71;
+  background-color: #ecfdf0;
+}
+
+.error-message {
+  font-size: 0.9rem;
+  color: #e74c3c;
+  margin-top: 4px;
+}

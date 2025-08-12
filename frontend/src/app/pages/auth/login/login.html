@@ -1,37 +1,49 @@
 <div class="auth-container">
   <div class="auth-card">
     <h2>Login</h2>
-    
-    <form (ngSubmit)="onSubmit()">
+
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+      
+      <!-- Email -->
       <div class="form-group">
         <label for="email">Email</label>
         <input 
           type="email" 
           id="email" 
-          [(ngModel)]="email" 
-          name="email" 
-          required
+          formControlName="email"
+          [ngClass]="{
+            'invalid': loginForm.get('email')?.invalid && loginForm.get('email')?.touched,
+            'valid': loginForm.get('email')?.valid && loginForm.get('email')?.touched
+          }"
         >
+        <div class="error-message" *ngIf="loginForm.get('email')?.invalid && loginForm.get('email')?.touched">
+          Email is required and must be valid
+        </div>
       </div>
-      
+
+      <!-- Password -->
       <div class="form-group">
         <label for="password">Password</label>
         <input 
           type="password" 
           id="password" 
-          [(ngModel)]="password" 
-          name="password" 
-          required
+          formControlName="password"
+          [ngClass]="{
+            'invalid': loginForm.get('password')?.invalid && loginForm.get('password')?.touched,
+            'valid': loginForm.get('password')?.valid && loginForm.get('password')?.touched
+          }"
         >
+        <div class="error-message" *ngIf="loginForm.get('password')?.invalid && loginForm.get('password')?.touched">
+          Password is required (min 6 characters)
+        </div>
       </div>
-      
-      @if (error) {
-        <div class="error-message">{{ error }}</div>
-      }
-      
-      <button type="submit" class="auth-button">Login</button>
+
+      <!-- Global error -->
+      <div class="error-message" *ngIf="error">{{ error }}</div>
+
+      <button type="submit" class="auth-button" [disabled]="loginForm.invalid">Login</button>
     </form>
-    
+
     <div class="auth-footer">
       Don't have an account? <a routerLink="/signup">Create one</a>
     </div>

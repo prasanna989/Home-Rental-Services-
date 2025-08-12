@@ -2,59 +2,89 @@
   <div class="auth-card">
     <h2>Create Account</h2>
 
-    <div *ngIf="error" class="error-message">{{ error }}</div>
-
     <form [formGroup]="signupForm" (ngSubmit)="onSubmit()">
+      
+      <!-- Full Name -->
       <div class="form-group">
         <label for="name">Full Name</label>
-        <input type="text" id="name" formControlName="name" placeholder="Enter your name" />
-        <small *ngIf="(signupForm.get('name')?.touched || submitted) && signupForm.get('name')?.errors?.['required']" class="error-text">
-          Name is required
-        </small>
-        <small *ngIf="signupForm.get('name')?.errors?.['minlength']" class="error-text">
-          Minimum 3 characters required
-        </small>
+        <input 
+          type="text" 
+          id="name" 
+          formControlName="name"
+          placeholder="Enter your name"
+          [ngClass]="{
+            'invalid': signupForm.get('name')?.invalid && signupForm.get('name')?.touched,
+            'valid': signupForm.get('name')?.valid && signupForm.get('name')?.touched
+          }"
+        >
+        <div class="error-message" *ngIf="signupForm.get('name')?.invalid && signupForm.get('name')?.touched">
+          Name is required (min 3 characters)
+        </div>
       </div>
 
+      <!-- Email -->
       <div class="form-group">
         <label for="email">Email</label>
-        <input type="email" id="email" formControlName="email" placeholder="Enter your email" />
-        <small *ngIf="(signupForm.get('email')?.touched || submitted) && signupForm.get('email')?.errors?.['required']" class="error-text">
-          Email is required
-        </small>
-        <small *ngIf="signupForm.get('email')?.errors?.['email']" class="error-text">
-          Enter a valid email
-        </small>
+        <input 
+          type="email" 
+          id="email" 
+          formControlName="email"
+          placeholder="Enter your email"
+          [ngClass]="{
+            'invalid': signupForm.get('email')?.invalid && signupForm.get('email')?.touched,
+            'valid': signupForm.get('email')?.valid && signupForm.get('email')?.touched
+          }"
+        >
+        <div class="error-message" *ngIf="signupForm.get('email')?.invalid && signupForm.get('email')?.touched">
+          Email is required and must be valid
+        </div>
       </div>
 
+      <!-- Phone -->
       <div class="form-group">
-      <label for="phone">Phone Number</label>
-      <input type="text" id="phone" formControlName="phone" placeholder="Enter your phone number" />
-      
-      <small *ngIf="signupForm.get('phone')?.touched && signupForm.get('phone')?.errors?.['required']" class="error-text">
-        Phone number is required
-      </small>
-      <small *ngIf="signupForm.get('phone')?.errors?.['pattern']" class="error-text">
-        Enter a valid 10-digit phone number
-      </small>
-    </div>
+        <label for="phone">Phone Number</label>
+        <input 
+          type="text" 
+          id="phone" 
+          formControlName="phone"
+          placeholder="Enter your phone number"
+          [ngClass]="{
+            'invalid': signupForm.get('phone')?.invalid && signupForm.get('phone')?.touched,
+            'valid': signupForm.get('phone')?.valid && signupForm.get('phone')?.touched
+          }"
+        >
+        <div class="error-message" *ngIf="signupForm.get('phone')?.invalid && signupForm.get('phone')?.touched">
+          Enter a valid 10-digit phone number
+        </div>
+      </div>
 
+      <!-- Password -->
       <div class="form-group">
         <label for="password">Password</label>
-        <input type="password" id="password" formControlName="password" placeholder="Enter your password" />
-        <small *ngIf="(signupForm.get('password')?.touched || submitted) && signupForm.get('password')?.errors?.['required']" class="error-text">
-          Password is required
-        </small>
-        <small *ngIf="signupForm.get('password')?.errors?.['minlength']" class="error-text">
-          Password must be at least 6 characters
-        </small>
+        <input 
+          type="password" 
+          id="password" 
+          formControlName="password"
+          placeholder="Enter your password"
+          [ngClass]="{
+            'invalid': signupForm.get('password')?.invalid && signupForm.get('password')?.touched,
+            'valid': signupForm.get('password')?.valid && signupForm.get('password')?.touched
+          }"
+        >
+        <div class="error-message" *ngIf="signupForm.get('password')?.invalid && signupForm.get('password')?.touched">
+          Password is required (min 6 characters)
+        </div>
       </div>
 
-      <button type="submit" class="auth-button">Sign Up</button>
+      <!-- Global error -->
+      <div class="error-message" *ngIf="error">{{ error }}</div>
+
+      <button type="submit" class="auth-button" [disabled]="signupForm.invalid">Sign Up</button>
     </form>
 
     <div class="divider">OR</div>
 
+    <!-- Google Sign-Up -->
     <button type="button" class="google-button" (click)="signUpWithGoogle()">
       <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google Icon" />
       Sign Up with Google
@@ -65,4 +95,3 @@
     </div>
   </div>
 </div>
-

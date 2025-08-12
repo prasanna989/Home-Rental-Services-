@@ -14,39 +14,56 @@ import { CommonModule } from '@angular/common';
 export class Signup implements OnInit {
   signupForm!: FormGroup;
   error = '';
-  submitted = false;
 
-  constructor(private fb: FormBuilder, private authService: AuthService, private router: Router) {}
+  constructor(
+    private fb: FormBuilder,
+    private authService: AuthService,
+    private router: Router
+  ) {}
 
   ngOnInit(): void {
     this.signupForm = this.fb.group({
       name: ['', [Validators.required, Validators.minLength(3)]],
       email: ['', [Validators.required, Validators.email]],
-      password: ['', [Validators.required, Validators.minLength(6)]],
       phone: ['', [Validators.required, Validators.pattern('^[0-9]{10}$')]],
+      password: ['', [Validators.required, Validators.minLength(6)]],
     });
   }
 
-  onSubmit() {
-  this.submitted = true;
+  onSubmit(): void {
 
-  if (this.signupForm.invalid) {
-    this.signupForm.markAllAsTouched(); 
+    if (typeof window === 'undefined') {
+    console.warn('Running in server mode, skipping signup logic.');
     return;
   }
+    if (this.signupForm.valid) {
+      const { name, email, password, phone } = this.signupForm.value;
 
-  const { name, email, password, phone } = this.signupForm.value;
-  const success = this.authService.signup(name, email, password, phone);
-  if (success) {
-    this.router.navigate(['/']);
-  } else {
-    this.error = 'Email already exists';
+      // Get existing users
+      const users = JSON.parse(localStorage.getItem('users') || '[]');
+
+      // Check if email already exists
+      const emailExists = users.some((u: any) => u.email === email);
+      if (emailExists) {
+        this.error = 'Email already exists';
+        return;
+      }
+
+      // Push new user
+      users.push({ name, email, phone, password });
+      localStorage.setItem('users', JSON.stringify(users));
+
+      // Optional: Also use AuthService if needed
+      this.authService.signup(name, email, password, phone);
+
+      // Redirect
+      this.router.navigate(['/']);
+    } else {
+      this.signupForm.markAllAsTouched();
+    }
   }
-}
 
-  signUpWithGoogle() {
-    // Integrate Firebase or Google OAuth API
+  signUpWithGoogle(): void {
     alert('Google sign-up clicked!');
   }
 }
-
