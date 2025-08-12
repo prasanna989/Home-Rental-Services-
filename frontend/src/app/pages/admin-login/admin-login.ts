@@ -27,6 +27,7 @@ export class AdminLogin {
   ) {
     this.adminLoginForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
+      password: ['', [Validators.required, Validators.minLength(6)]],
       passkey: ['', Validators.required]
     });
 
@@ -36,32 +37,37 @@ export class AdminLogin {
   }
 
   onSubmit(): void {
-  if (this.adminLoginForm.valid) {
-    const { email, passkey } = this.adminLoginForm.value;
+    if (this.adminLoginForm.valid) {
+      const { email, password, passkey } = this.adminLoginForm.value;
 
-    // Get users from localStorage
-    const storedUsers = JSON.parse(localStorage.getItem('users') || '[]');
-    const emailExists = storedUsers.some((u: any) => u.email === email);
+      // Get users from localStorage
+      const storedUsers = JSON.parse(localStorage.getItem('users') || '[]');
+      const user = storedUsers.find((u: any) => u.email === email);
 
-    if (!emailExists) {
-      this.error = 'Invalid email';
-      this.infoMessage = '';
-      return;
+      if (!user) {
+        this.error = 'Invalid email';
+        this.infoMessage = '';
+        return;
+      }
+
+      if (user.password !== password) {
+        this.error = 'Invalid password';
+        this.infoMessage = '';
+        return;
+      }
+
+      if (passkey !== this.ADMIN_PASSKEY) {
+        this.error = 'Invalid passkey';
+        this.infoMessage = '';
+        return;
+      }
+
+      // Admin login success
+      localStorage.setItem('adminLoggedIn', 'true');
+      localStorage.setItem('adminEmail', email); // optional tracking
+      this.router.navigateByUrl('/admin/dashboard');
+    } else {
+      this.adminLoginForm.markAllAsTouched();
     }
-
-    if (passkey !== this.ADMIN_PASSKEY) {
-      this.error = 'Invalid passkey';
-      this.infoMessage = '';
-      return;
-    }
-
-    // Admin login success
-    localStorage.setItem('adminLoggedIn', 'true');
-    this.router.navigateByUrl('/admin/dashboard');
-  } else {
-    this.adminLoginForm.markAllAsTouched();
   }
-}
-
-
 }

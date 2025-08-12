@@ -1,42 +1,47 @@
 <div class="auth-container">
   <div class="auth-card">
     <h2>Admin Login</h2>
-    
+
     <form [formGroup]="adminLoginForm" (ngSubmit)="onSubmit()">
-      
+
       <!-- Email -->
       <div class="form-group">
         <label for="email">Email</label>
-        <input 
-          type="email" 
-          id="email" 
-          formControlName="email"
-          [ngClass]="{
-            'invalid': adminLoginForm.get('email')?.invalid && adminLoginForm.get('email')?.touched,
-            'valid': adminLoginForm.get('email')?.valid && adminLoginForm.get('email')?.touched
-          }"
-        >
+        <input type="email" id="email" formControlName="email" [ngClass]="{
+      'invalid': adminLoginForm.get('email')?.invalid && adminLoginForm.get('email')?.touched,
+      'valid': adminLoginForm.get('email')?.valid && adminLoginForm.get('email')?.touched
+    }">
         <div class="error-message" *ngIf="adminLoginForm.get('email')?.invalid && adminLoginForm.get('email')?.touched">
           Email is required and must be valid
+        </div>
+      </div>
+
+      <!-- Password -->
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input type="password" id="password" formControlName="password" [ngClass]="{
+      'invalid': adminLoginForm.get('password')?.invalid && adminLoginForm.get('password')?.touched,
+      'valid': adminLoginForm.get('password')?.valid && adminLoginForm.get('password')?.touched
+    }">
+        <div class="error-message"
+          *ngIf="adminLoginForm.get('password')?.invalid && adminLoginForm.get('password')?.touched">
+          Password is required (min 6 characters)
         </div>
       </div>
 
       <!-- Passkey -->
       <div class="form-group">
         <label for="passkey">Passkey</label>
-        <input 
-          type="password" 
-          id="passkey" 
-          formControlName="passkey"
-          [ngClass]="{
-            'invalid': adminLoginForm.get('passkey')?.invalid && adminLoginForm.get('passkey')?.touched,
-            'valid': adminLoginForm.get('passkey')?.valid && adminLoginForm.get('passkey')?.touched
-          }"
-        >
-        <div class="error-message" *ngIf="adminLoginForm.get('passkey')?.invalid && adminLoginForm.get('passkey')?.touched">
+        <input type="password" id="passkey" formControlName="passkey" [ngClass]="{
+      'invalid': adminLoginForm.get('passkey')?.invalid && adminLoginForm.get('passkey')?.touched,
+      'valid': adminLoginForm.get('passkey')?.valid && adminLoginForm.get('passkey')?.touched
+    }">
+        <div class="error-message"
+          *ngIf="adminLoginForm.get('passkey')?.invalid && adminLoginForm.get('passkey')?.touched">
           Passkey is required
         </div>
       </div>
+
 
       <!-- Global error -->
       <div class="error-message" *ngIf="error">{{ error }}</div>
@@ -46,7 +51,7 @@
 
       <button type="submit" class="auth-button" [disabled]="adminLoginForm.invalid">Login</button>
     </form>
-    
+
     <div class="auth-footer">
       Don't have an account? <a routerLink="/signup">Create one</a> <br>
       Need a passkey? <a routerLink="/contact">Contact Us</a>

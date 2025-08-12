@@ -49,7 +49,15 @@ export class AuthService {
   constructor(
     private router: Router,
     private notification: NotificationService
-  ) {}
+  ) {
+    if (typeof window !== 'undefined' && window.localStorage) {
+      const savedUser = localStorage.getItem('loggedInUser');
+      if (savedUser) {
+        this.currentUser.set(JSON.parse(savedUser));
+        this.isAuthenticated.set(true);
+      }
+    }
+  }
 
   
   
