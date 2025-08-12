@@ -1,5 +1,5 @@
 import { Routes } from '@angular/router';
-import { Home } from './pages/home/home';
+
 import { About } from './pages/about/about';
 import { Login } from './pages/auth/login/login';
 import { Signup } from './pages/auth/signup/signup';
@@ -9,9 +9,10 @@ import { AdminDashboardComponent } from './pages/admin-dashboard/admin-dashboard
 import { UserListComponent } from './pages/user-list.component/user-list.component';
 import { Contact } from './pages/contact/contact';
 import { BrowseHome } from './pages/browse-home/browse-home';
+import { HomePage } from './pages/home/home';
 
 export const routes: Routes = [
-  { path: '', component: Home, title: 'Home Rental Service' },
+  { path: '', component: HomePage, title: 'Home Rental Service' },
   { path: 'about', component: About, title: 'About Us' },
   { path: 'login', component: Login, title: 'Login' },
   { path: 'signup', component: Signup, title: 'Create Account' },
@@ -44,5 +45,6 @@ export const routes: Routes = [
     path: 'property/:id',
     loadComponent: () => import('./pages/property-details/property-details').then(m => m.PropertyDetails),
     title: 'Property Details'
-  }
+  }, 
+  { path: '**', redirectTo: '' }
 ];

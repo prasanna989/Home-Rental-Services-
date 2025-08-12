@@ -16,7 +16,7 @@ declare var Razorpay: any;
 export class BookingForm {
   @Input() home!: Home;
   @Output() close = new EventEmitter<void>();
-  @Output() bookingConfirmed = new EventEmitter<number>();
+  @Output() bookingConfirmed = new EventEmitter<string>(); 
 
   checkInDate: string = '';
   checkOutDate: string = '';
@@ -41,7 +41,7 @@ export class BookingForm {
       return;
     }
 
-    const amount = this.home.price * nights * 100; // amount in paise
+    const amount = this.home.price * nights * 100;
     const options: any = {
       key: 'rzp_test_udBZdAzJoFhuYe',
       amount: amount,
@@ -52,7 +52,7 @@ export class BookingForm {
       handler: (response: any) => {
         console.log('Payment success:', response);
         this.homeService.addBooking(this.home);
-        this.bookingConfirmed.emit(this.home.id);
+        this.bookingConfirmed.emit(this.home._id); // Changed to _id
         alert(`✅ Payment successful! Booked ${nights} nights at ₹${this.home.price * nights}`);
         this.close.emit();
       },
@@ -62,7 +62,7 @@ export class BookingForm {
         contact: '9123456789'
       },
       notes: {
-        home_id: this.home.id
+        home_id: this.home._id // Changed to _id
       },
       theme: {
         color: '#28a745'
@@ -70,21 +70,13 @@ export class BookingForm {
     };
 
     const rzp = new Razorpay(options);
-
     rzp.on('payment.failed', (response: any) => {
       console.error('Payment failed:', response.error);
-      alert(
-        `❌ Payment failed!\nReason: ${response.error.reason}\nDescription: ${response.error.description}`
-      );
+      alert(`❌ Payment failed!\nReason: ${response.error.reason}\nDescription: ${response.error.description}`);
     });
-
     rzp.on('payment.cancelled', () => {
       alert('⚠️ Payment was cancelled.');
     });
-
     rzp.open();
   }
-
 }
-
-
