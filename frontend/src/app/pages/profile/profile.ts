@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, Input } from '@angular/core';
 import { AuthService } from '../../services/auth.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -14,7 +14,10 @@ import { Router } from '@angular/router';
   templateUrl: './profile.html',
   styleUrls: ['./profile.css']
 })
+
 export class Profile {
+  @Input() propertyId: string = ''; // Fixed Input declaration
+  
   authService = inject(AuthService);
   isEditing = false;
   editedUser: any = {};
@@ -38,8 +41,8 @@ export class Profile {
 
   cancelBooking(home: Home) {
     if (confirm('Are you sure you want to cancel this booking?')) {
-      this.homeService.cancelBooking(home.id);
-      this.bookedHomes = this.bookedHomes.filter(h => h.id !== home.id);
+      this.homeService.cancelBooking(home._id);
+      this.bookedHomes = this.bookedHomes.filter(h => h._id !== home._id);
     }
   }
 
@@ -92,7 +95,7 @@ export class Profile {
     }
   }
 
-  removeFavorite(propertyId: number) {
+  removeFavorite(propertyId: string) {
     this.authService.removeFavoriteProperty(propertyId);
   }
 }
