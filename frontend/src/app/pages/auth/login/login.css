@@ -89,4 +89,63 @@ input.valid {
   font-size: 0.9rem;
   color: #e74c3c;
   margin-top: 4px;
+  text-align: center;
 }
+
+
+.role-options {
+  display: flex;
+  gap: 1rem;
+  margin-top: 0.5rem;
+}
+
+.role-label {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.role-label input {
+  cursor: pointer;
+}
+/* Role Selection Styles */
+.role-selection {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.role-selection button {
+  padding: 0.6rem 1.5rem;
+  border: 2px solid #4CAF50;
+  background-color: white;
+  color: #4CAF50;
+  border-radius: 25px;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.role-selection button:hover {
+  background-color: #4CAF50;
+  color: white;
+  transform: translateY(-2px);
+}
+
+.role-selection button.active {
+  background-color: #4CAF50;
+  color: white;
+  box-shadow: 0 4px 10px rgba(76, 175, 80, 0.3);
+}
+
+.role-selection button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+

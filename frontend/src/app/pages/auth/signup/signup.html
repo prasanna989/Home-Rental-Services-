@@ -76,38 +76,11 @@
         </div>
       </div>
 
-      <!-- Role Dropdown -->
-      <div class="form-group">
-        <label for="role">Role</label>
-        <select
-          id="role"
-          formControlName="role"
-          [ngClass]="{
-            'invalid': signupForm.get('role')?.invalid && signupForm.get('role')?.touched,
-            'valid': signupForm.get('role')?.valid && signupForm.get('role')?.touched
-          }"
-        >
-          <option value="" disabled>Select role</option>
-          <option *ngFor="let role of roles" [value]="role.value">{{ role.label }}</option>
-        </select>
-        <div class="error-message" *ngIf="signupForm.get('role')?.invalid && signupForm.get('role')?.touched">
-          Role selection is required
-        </div>
-      </div>
-
       <!-- Global error -->
       <div class="error-message" *ngIf="error">{{ error }}</div>
 
       <button type="submit" class="auth-button" [disabled]="signupForm.invalid">Sign Up</button>
     </form>
-
-    <div class="divider">OR</div>
-
-    <!-- Google Sign-Up -->
-    <button type="button" class="google-button" (click)="signUpWithGoogle()">
-      <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google Icon" />
-      Sign Up with Google
-    </button>
 
     <div class="auth-footer">
       Already have an account? <a routerLink="/login">Login</a>

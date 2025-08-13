@@ -4,8 +4,6 @@ import { AuthService } from '../../../services/auth.service';
 import { Router, RouterLink, ActivatedRoute } from '@angular/router';
 import { CommonModule } from '@angular/common';
 
-
-
 @Component({
   selector: 'app-login',
   standalone: true,
@@ -13,10 +11,12 @@ import { CommonModule } from '@angular/common';
   templateUrl: './login.html',
   styleUrls: ['./login.css']
 })
+
 export class Login {
   loginForm: FormGroup;
   error = '';
   returnUrl = '/';
+  selectedRole: 'owner' | 'tenant' | '' = '';  // New
 
   constructor(
     private fb: FormBuilder,
@@ -29,30 +29,51 @@ export class Login {
       password: ['', [Validators.required, Validators.minLength(6)]]
     });
 
-    // Capture return URL if any
     this.route.queryParams.subscribe(params => {
       this.returnUrl = params['returnUrl'] || '/';
     });
   }
 
+  selectRole(role: 'owner' | 'tenant') {
+    this.selectedRole = role;
+  }
+
+  showRoleError = false;
+
   onSubmit() {
+  if (!this.selectedRole) {
+    this.showRoleError = true;
+    return;
+  }
+  
+  this.showRoleError = false;
+
+  if (this.loginForm.invalid) {
+    this.loginForm.markAllAsTouched();
+    return;
+  }
+
   if (this.loginForm.valid) {
     const { email, password } = this.loginForm.value;
-    console.log('Submitting login for', email);
-    this.authService.login(email, password).subscribe({
-      next: () => {
-        console.log('Login success, redirecting...');
-        this.router.navigateByUrl(this.returnUrl);
-      },
-      error: (err) => {
-        console.error('Login error:', err);
-        this.error = err.error?.message || 'Invalid email or password';
-      }
-    });
+    const role: 'owner' | 'tenant' = this.selectedRole;
+
+    this.authService.login(email, password, role).subscribe({
+  next: (res: any) => {
+    // Redirect based on selected role
+    if (role === 'owner') {
+      this.router.navigate(['/admin/dashboard']);
+    } else {
+      this.router.navigate(['/home']);
+    }
+  },
+  error: (err) => {
+    this.error = err.error?.message || 'Invalid email or password';
+  }
+});
+
   } else {
     this.loginForm.markAllAsTouched();
   }
 }
-
 
 }

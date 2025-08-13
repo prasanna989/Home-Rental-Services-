@@ -22,7 +22,8 @@ export const routes: Routes = [
   {
     path: 'admin/dashboard',
     component: AdminDashboardComponent,
-    title: 'Admin Dashboard'
+    canActivate: [AuthGuard],
+    data: { roles: ['owner'] }
   },
   {
     path: 'profile',
@@ -46,5 +47,6 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/property-details/property-details').then(m => m.PropertyDetails),
     title: 'Property Details'
   }, 
+  { path: 'home', component: HomePage },
   { path: '**', redirectTo: '' }
 ];

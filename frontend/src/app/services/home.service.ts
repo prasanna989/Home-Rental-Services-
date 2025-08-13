@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Home } from '../models/home.model';
 import { FilterOptions } from '../models/filter-options.model';
+import { AuthService } from './auth.service';
 
 @Injectable({
   providedIn: 'root'
@@ -11,10 +12,14 @@ export class HomeService {
   private apiUrl = 'http://localhost:5000/api/properties';
   private bookedHomes: Home[] = [];
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private authService: AuthService) {}
 
   getHomes(): Observable<Home[]> {
     return this.http.get<Home[]>(this.apiUrl);
+  }
+
+  getMyProperties(): Observable<Home[]> {
+    return this.http.get<Home[]>(`${this.apiUrl}/my-properties`);
   }
 
   getAvailableHomes(): Observable<Home[]> {

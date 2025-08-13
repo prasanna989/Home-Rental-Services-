@@ -5,7 +5,7 @@ const userSchema = new mongoose.Schema({
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true },
   phone: String,
-  role: { type: String, enum: ['tenant', 'owner'], required: true },
+  role: { type: String, enum: ['tenant', 'owner', 'admin'], default: 'tenant' },
   favorites: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Property' }],
   profileImageUrl: String,
   bio: String,

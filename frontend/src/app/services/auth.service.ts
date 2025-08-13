@@ -55,6 +55,8 @@ export class AuthService {
   isAuthenticated = signal(false);
   currentUser = signal<User | null>(null);
 
+  loginRole: 'owner' | 'tenant' | '' = '';
+
   constructor(
     private router: Router,
     private notification: NotificationService,
@@ -62,14 +64,7 @@ export class AuthService {
     @Inject(PLATFORM_ID) private platformId: Object
   ) {
     this.initializeAuthState();
-    if (typeof window !== 'undefined' && window.localStorage) {
-      const token = localStorage.getItem('jwtToken');
-      const savedUser = localStorage.getItem('loggedInUser');
-      if (token && savedUser) {
-        this.isAuthenticated.set(true);
-        this.currentUser.set(JSON.parse(savedUser));
-      }
-    }
+
   }
 
   private initializeAuthState(): void {
@@ -110,9 +105,19 @@ export class AuthService {
     }
   }
 
+setLoginRole(role: 'owner' | 'tenant') {
+  this.loginRole = role;
+}
+
+// Method to get login role
+getLoginRole(): 'owner' | 'tenant' | '' {
+  return this.loginRole;
+}
+
+
 
   // Signup with backend API
-  signup(userData: { name: string; email: string; password: string; phone: string; role: string }): Observable<any> {
+  signup(userData: { name: string; email: string; password: string; phone: string }): Observable<any> {
     return this.http.post(`${this.apiUrl}/register`, userData).pipe(
       tap({
         next: () => {
@@ -127,24 +132,28 @@ export class AuthService {
   }
 
   // Login with backend API, save token & user info
-login(email: string, password: string): Observable<any> {
-    return this.http.post<{ token: string }>(`${this.apiUrl}/login`, { email, password }).pipe(
-      tap({
-        next: (res) => {
-          console.log('Login response:', res);
-          const userFromToken = jwtDecode(res.token) as User;
-          this.isAuthenticated.set(true);
-          this.currentUser.set(userFromToken);
+login(email: string, password: string, role: 'owner' | 'tenant'): Observable<any> {
+  return this.http.post<{ token: string }>(`${this.apiUrl}/login`, { email, password }).pipe(
+    tap({
+      next: (res) => {
+        console.log('Login response:', res);
+        const userFromToken = jwtDecode(res.token) as User;
+        this.isAuthenticated.set(true);
+        this.currentUser.set(userFromToken);
+        this.setLoginRole(role);  // store the role
+        if (isPlatformBrowser(this.platformId)) {
           localStorage.setItem('jwtToken', res.token);
           localStorage.setItem('loggedInUser', JSON.stringify(userFromToken));
-          this.notification.success('Login successful!');
-        },
-        error: (err) => {
-          this.notification.error(err.error?.message || 'Login failed.');
         }
-      })
-    );
-  }
+        this.notification.success('Login successful!');
+      },
+      error: (err) => {
+        this.notification.error(err.error?.message || 'Login failed.');
+      }
+    })
+  );
+}
+
 
 
 
@@ -154,15 +163,18 @@ login(email: string, password: string): Observable<any> {
   logout(): void {
     this.isAuthenticated.set(false);
     this.currentUser.set(null);
+    if (isPlatformBrowser(this.platformId)) {
     localStorage.removeItem('jwtToken');
     localStorage.removeItem('loggedInUser');
+  }
     this.notification.info('You have been logged out.');
     this.router.navigate(['/login']);
   }
 
   isLoggedIn(): boolean {
-    return !!localStorage.getItem('jwtToken');
-  }
+  if (!isPlatformBrowser(this.platformId)) return false;
+  return !!localStorage.getItem('jwtToken');
+}
 
   updateProfile(updatedUser: User): boolean {
     const index = this.users.findIndex(u => u.email === updatedUser.email);

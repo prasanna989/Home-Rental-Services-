@@ -15,11 +15,6 @@ export class Signup implements OnInit {
   signupForm!: FormGroup;
   error = '';
 
-  roles = [
-    { label: 'Tenant', value: 'tenant' },
-    { label: 'Property Owner', value: 'owner' }
-  ];
-
   constructor(
     private fb: FormBuilder,
     private authService: AuthService,
@@ -31,8 +26,7 @@ export class Signup implements OnInit {
       name: ['', [Validators.required, Validators.minLength(3)]],
       email: ['', [Validators.required, Validators.email]],
       phone: ['', [Validators.required, Validators.pattern('^[0-9]{10}$')]],
-      password: ['', [Validators.required, Validators.minLength(6)]],
-      role: ['', Validators.required]
+      password: ['', [Validators.required, Validators.minLength(6)]]
     });
   }
 

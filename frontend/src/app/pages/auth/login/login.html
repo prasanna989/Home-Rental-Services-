@@ -2,20 +2,29 @@
   <div class="auth-card">
     <h2>Login</h2>
 
+    <!-- Role Selection -->
+    <div class="role-selection">
+      <button type="button" 
+              [class.active]="selectedRole === 'owner'" 
+              (click)="selectRole('owner')">Owner</button>
+      <button type="button" 
+              [class.active]="selectedRole === 'tenant'" 
+              (click)="selectRole('tenant')">Tenant</button>
+    </div>
+
+    <div class="error-message" *ngIf="showRoleError">
+      Please select a role before logging in.
+    </div>
+
     <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
-      
       <!-- Email -->
       <div class="form-group">
         <label for="email">Email</label>
-        <input 
-          type="email" 
-          id="email" 
-          formControlName="email"
+        <input type="email" id="email" formControlName="email"
           [ngClass]="{
             'invalid': loginForm.get('email')?.invalid && loginForm.get('email')?.touched,
             'valid': loginForm.get('email')?.valid && loginForm.get('email')?.touched
-          }"
-        >
+          }">
         <div class="error-message" *ngIf="loginForm.get('email')?.invalid && loginForm.get('email')?.touched">
           Email is required and must be valid
         </div>
@@ -24,15 +33,11 @@
       <!-- Password -->
       <div class="form-group">
         <label for="password">Password</label>
-        <input 
-          type="password" 
-          id="password" 
-          formControlName="password"
+        <input type="password" id="password" formControlName="password"
           [ngClass]="{
             'invalid': loginForm.get('password')?.invalid && loginForm.get('password')?.touched,
             'valid': loginForm.get('password')?.valid && loginForm.get('password')?.touched
-          }"
-        >
+          }">
         <div class="error-message" *ngIf="loginForm.get('password')?.invalid && loginForm.get('password')?.touched">
           Password is required (min 6 characters)
         </div>
@@ -41,7 +46,10 @@
       <!-- Global error -->
       <div class="error-message" *ngIf="error">{{ error }}</div>
 
-      <button type="submit" class="auth-button" [disabled]="loginForm.invalid">Login</button>
+      <button type="submit" class="auth-button">
+  Login as {{ selectedRole ? (selectedRole | titlecase) : '...' }}
+</button>
+
     </form>
 
     <div class="auth-footer">
