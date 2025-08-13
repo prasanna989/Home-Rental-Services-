@@ -44,7 +44,7 @@ export class HomeService {
   }
 
   removeHome(id: string): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/${id}`);
+  return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
 
   updateHomeStatus(id: string, status: boolean): Observable<Home> {

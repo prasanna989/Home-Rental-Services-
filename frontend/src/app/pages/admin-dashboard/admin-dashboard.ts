@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, NgForm } from '@angular/forms';
 import { HomeService } from '../../services/home.service';
 import { Home } from '../../models/home.model';
 
@@ -21,12 +21,25 @@ export class AdminDashboardComponent implements OnInit {
     rentPerDay: 0,
     location: '',
     available: true,
-    imageUrl: '', // Added missing required field
+    imageUrl: '', 
     amenities: []
   };
-  editingProperty: Home | null = null;
+  editingProperty: Home = {
+    _id: '',
+    title: '',
+    type: '',
+    price: 0,
+    rentPerDay: 0,
+    location: '',
+    available: true,
+    imageUrl: '',
+    amenities: []
+  };
   selectedFile: File | null = null;
   selectedEditFile: File | null = null;
+  isAdding: boolean = false;
+  isUpdating: boolean = false;
+  isEditing: boolean = false;
 
   constructor(private homeService: HomeService) {}
 
@@ -41,7 +54,10 @@ export class AdminDashboardComponent implements OnInit {
     });
   }
 
-  addProperty(): void {
+  addProperty(form: NgForm): void {
+    if (this.isAdding || !form.valid) return;
+    
+    this.isAdding = true;
     const formData = new FormData();
     formData.append('title', this.newProperty.title);
     formData.append('type', this.newProperty.type);
@@ -50,45 +66,71 @@ export class AdminDashboardComponent implements OnInit {
     formData.append('location', this.newProperty.location);
     formData.append('available', this.newProperty.available.toString());
     
-    // Add amenities
     this.newProperty.amenities.forEach(amenity => {
       formData.append('amenities[]', amenity);
     });
 
-    // Add image if selected
     if (this.selectedFile) {
       formData.append('image', this.selectedFile);
     }
 
     this.homeService.addHome(formData).subscribe({
-      next: () => {
-        this.loadProperties();
+      next: (addedHome) => {
+        this.homes = [...this.homes, addedHome];
         this.resetForm();
+        form.resetForm();
+        this.isAdding = false;
       },
-      error: (err) => console.error('Error adding property', err)
+      error: (err) => {
+        console.error('Error adding property', err);
+        this.isAdding = false;
+      }
     });
   }
 
   removeProperty(_id: string): void {
-    if (confirm('Are you sure you want to delete this property?')) {
-      this.homeService.removeHome(_id).subscribe({
-        next: () => this.loadProperties(),
-        error: (err) => console.error('Error removing property', err)
-      });
-    }
+    if (!confirm('Are you sure you want to delete this property?')) return;
+
+    const removedIndex = this.homes.findIndex(home => home._id === _id);
+    const removedHome = this.homes[removedIndex];
+    
+    this.homes = this.homes.filter(home => home._id !== _id);
+
+    this.homeService.removeHome(_id).subscribe({
+      next: () => console.log('Property removed successfully'),
+      error: (err) => {
+        console.error('Error removing property', err);
+        this.homes.splice(removedIndex, 0, removedHome);
+        this.homes = [...this.homes];
+      }
+    });
   }
 
   editProperty(home: Home): void {
     this.editingProperty = { ...home };
+    this.isEditing = true;
   }
 
   cancelEdit(): void {
-    this.editingProperty = null;
+    this.isEditing = false;
+    this.editingProperty = {
+      _id: '',
+      title: '',
+      type: '',
+      price: 0,
+      rentPerDay: 0,
+      location: '',
+      available: true,
+      imageUrl: '',
+      amenities: []
+    };
+    this.selectedEditFile = null;
   }
 
-  saveChanges(): void {
-    if (!this.editingProperty || !this.editingProperty._id) return;
-
+saveChanges(editForm: NgForm): void {
+    if (!this.isEditing || !this.editingProperty._id || this.isUpdating || !editForm.valid) return;
+    
+    this.isUpdating = true;
     const formData = new FormData();
     formData.append('title', this.editingProperty.title);
     formData.append('type', this.editingProperty.type);
@@ -97,22 +139,49 @@ export class AdminDashboardComponent implements OnInit {
     formData.append('location', this.editingProperty.location);
     formData.append('available', this.editingProperty.available.toString());
     
-    // Add amenities
     this.editingProperty.amenities.forEach(amenity => {
-      formData.append('amenities[]', amenity);
+      formData.append('amenities', JSON.stringify(this.editingProperty.amenities));
     });
 
-    // Add new image if selected
     if (this.selectedEditFile) {
       formData.append('image', this.selectedEditFile);
     }
 
+    const updatedIndex = this.homes.findIndex(home => home._id === this.editingProperty._id);
+    if (updatedIndex !== -1) {
+      const updatedHome = { 
+        ...this.editingProperty,
+        // Include the new image URL if a file was selected
+        imageUrl: this.selectedEditFile ? this.editingProperty.imageUrl : this.homes[updatedIndex].imageUrl
+      };
+      
+      // Create new array to trigger change detection
+      this.homes = [
+        ...this.homes.slice(0, updatedIndex),
+        updatedHome,
+        ...this.homes.slice(updatedIndex + 1)
+      ];
+    }
+
     this.homeService.updateHome(this.editingProperty._id, formData).subscribe({
-      next: () => {
-        this.loadProperties();
-        this.editingProperty = null;
+      next: (updatedHome) => {
+        this.homes = this.homes.map(home => 
+          home._id === updatedHome._id ? updatedHome : home
+        );
+        this.cancelEdit();
+        this.isUpdating = false;
       },
-      error: (err) => console.error('Error updating property', err)
+      error: (err) => {
+        console.error('Error updating property', err);
+        if (updatedIndex !== -1) {
+          this.homes = [
+            ...this.homes.slice(0, updatedIndex),
+            this.homes[updatedIndex], 
+            ...this.homes.slice(updatedIndex + 1)
+          ];
+        }
+        this.isUpdating = false;
+      }
     });
   }
 
@@ -145,11 +214,11 @@ export class AdminDashboardComponent implements OnInit {
 
   onEditFileSelected(event: Event): void {
     const input = event.target as HTMLInputElement;
-    if (input.files && input.files.length > 0 && this.editingProperty) {
+    if (input.files && input.files.length > 0 && this.isEditing) {
       this.selectedEditFile = input.files[0];
       const reader = new FileReader();
       reader.onload = () => {
-        this.editingProperty!.imageUrl = reader.result as string;
+        this.editingProperty.imageUrl = reader.result as string;
       };
       reader.readAsDataURL(this.selectedEditFile);
     }
@@ -169,14 +238,14 @@ export class AdminDashboardComponent implements OnInit {
 
   addAmenityToEdit(): void {
     const amenity = this.newAmenity.trim();
-    if (amenity && this.editingProperty && !this.editingProperty.amenities.includes(amenity)) {
+    if (amenity && this.isEditing && !this.editingProperty.amenities.includes(amenity)) {
       this.editingProperty.amenities.push(amenity);
     }
     this.newAmenity = '';
   }
 
   removeEditAmenity(index: number): void {
-    if (this.editingProperty) {
+    if (this.isEditing) {
       this.editingProperty.amenities.splice(index, 1);
     }
   }
