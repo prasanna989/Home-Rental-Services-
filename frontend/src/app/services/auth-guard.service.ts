@@ -12,14 +12,23 @@ export class AuthGuard implements CanActivate {
     route: ActivatedRouteSnapshot,
     state: RouterStateSnapshot
   ): boolean {
-    if (this.authService.isAuthenticated()) {
-      return true;
-    } else {
-      // Redirect to login page with the return URL
-      this.router.navigate(['/login'], { 
-        queryParams: { returnUrl: state.url } 
-      });
+    const isLoggedIn = this.authService.isLoggedIn();
+    const loginRole = this.authService.getLoginRole(); // Get the selected role
+
+    if (!isLoggedIn) {
+      // Not logged in → redirect to login page
+      this.router.navigate(['/login'], { queryParams: { returnUrl: state.url } });
       return false;
     }
+
+    // Check if route has role restrictions
+    const allowedRoles = route.data['roles'] as Array<'owner' | 'tenant'>;
+    if (allowedRoles && loginRole && !allowedRoles.includes(loginRole)) {
+      // Role not allowed → redirect to home or tenant page
+      this.router.navigate(['/home']);
+      return false;
+    }
+
+    return true; // Authorized
   }
 }

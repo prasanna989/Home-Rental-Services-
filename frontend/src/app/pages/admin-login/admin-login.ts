@@ -1,43 +1,73 @@
-import { Component, computed } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
+import { Component } from '@angular/core';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import { Router, RouterLink, ActivatedRoute } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { ActivatedRoute } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-admin-login',
   standalone: true,
-  imports: [FormsModule, CommonModule, RouterLink],
+  imports: [ReactiveFormsModule, CommonModule, RouterLink],
   templateUrl: './admin-login.html',
   styleUrls: ['./admin-login.css']
 })
 export class AdminLogin {
-  email: string = '';
-  password: string = '';
-  error: string = '';
-  returnUrl: string = '/';
+  adminLoginForm: FormGroup;
+  error = '';
+  infoMessage = '';
+  returnUrl = '/';
 
-  isLoggedIn = computed(() => this.authService.isAuthenticated());
-  currentUser = computed(() => this.authService.currentUser());
+  private readonly ADMIN_PASSKEY = '1234567890';
 
   constructor(
+    private fb: FormBuilder,
     private authService: AuthService,
     private router: Router,
     private route: ActivatedRoute
   ) {
+    this.adminLoginForm = this.fb.group({
+      email: ['', [Validators.required, Validators.email]],
+      password: ['', [Validators.required, Validators.minLength(6)]],
+      passkey: ['', Validators.required]
+    });
+
     this.route.queryParams.subscribe(params => {
       this.returnUrl = params['returnUrl'] || '/';
     });
   }
 
   onSubmit(): void {
-    const success = this.authService.login(this.email, this.password);
+    if (this.adminLoginForm.valid) {
+      const { email, password, passkey } = this.adminLoginForm.value;
 
-    if (success) {
+      // Get users from localStorage
+      const storedUsers = JSON.parse(localStorage.getItem('users') || '[]');
+      const user = storedUsers.find((u: any) => u.email === email);
+
+      if (!user) {
+        this.error = 'Invalid email';
+        this.infoMessage = '';
+        return;
+      }
+
+      if (user.password !== password) {
+        this.error = 'Invalid password';
+        this.infoMessage = '';
+        return;
+      }
+
+      if (passkey !== this.ADMIN_PASSKEY) {
+        this.error = 'Invalid passkey';
+        this.infoMessage = '';
+        return;
+      }
+
+      // Admin login success
+      localStorage.setItem('adminLoggedIn', 'true');
+      localStorage.setItem('adminEmail', email); // optional tracking
       this.router.navigateByUrl('/admin/dashboard');
     } else {
-      this.error = 'Invalid email or password';
+      this.adminLoginForm.markAllAsTouched();
     }
   }
 }

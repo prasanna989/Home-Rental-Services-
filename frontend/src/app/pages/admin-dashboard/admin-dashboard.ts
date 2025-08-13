@@ -3,6 +3,9 @@ import { CommonModule } from '@angular/common';
 import { FormsModule, NgForm } from '@angular/forms';
 import { HomeService } from '../../services/home.service';
 import { Home } from '../../models/home.model';
+import { Router } from '@angular/router';
+import { AuthService } from '../../services/auth.service';
+
 
 @Component({
   selector: 'app-admin-dashboard',
@@ -41,11 +44,25 @@ export class AdminDashboardComponent implements OnInit {
   isUpdating: boolean = false;
   isEditing: boolean = false;
 
-  constructor(private homeService: HomeService) {}
+  constructor(private homeService: HomeService,
+    private authService: AuthService,
+    private router: Router) {}
 
   ngOnInit(): void {
-    this.loadProperties();
+    // Check if user is an owner
+    const isOwner = this.authService.getLoginRole() === 'owner';
+    if (!isOwner) {
+      this.router.navigate(['/home']); // block non-owners
+      return;
+    }
+
+    // Fetch only owner's properties
+    this.homeService.getMyProperties().subscribe({
+      next: (properties) => this.homes = properties,
+      error: (err) => console.error('Error fetching owner properties', err)
+    });
   }
+
 
   loadProperties(): void {
     this.homeService.getHomes().subscribe({
