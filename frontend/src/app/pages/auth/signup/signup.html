@@ -3,7 +3,7 @@
     <h2>Create Account</h2>
 
     <form [formGroup]="signupForm" (ngSubmit)="onSubmit()">
-      
+
       <!-- Full Name -->
       <div class="form-group">
         <label for="name">Full Name</label>
@@ -73,6 +73,25 @@
         >
         <div class="error-message" *ngIf="signupForm.get('password')?.invalid && signupForm.get('password')?.touched">
           Password is required (min 6 characters)
+        </div>
+      </div>
+
+      <!-- Role Dropdown -->
+      <div class="form-group">
+        <label for="role">Role</label>
+        <select
+          id="role"
+          formControlName="role"
+          [ngClass]="{
+            'invalid': signupForm.get('role')?.invalid && signupForm.get('role')?.touched,
+            'valid': signupForm.get('role')?.valid && signupForm.get('role')?.touched
+          }"
+        >
+          <option value="" disabled>Select role</option>
+          <option *ngFor="let role of roles" [value]="role.value">{{ role.label }}</option>
+        </select>
+        <div class="error-message" *ngIf="signupForm.get('role')?.invalid && signupForm.get('role')?.touched">
+          Role selection is required
         </div>
       </div>
 

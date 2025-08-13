@@ -4,12 +4,14 @@ import { AuthService } from '../../../services/auth.service';
 import { Router, RouterLink, ActivatedRoute } from '@angular/router';
 import { CommonModule } from '@angular/common';
 
+
+
 @Component({
   selector: 'app-login',
   standalone: true,
   imports: [ReactiveFormsModule, CommonModule, RouterLink],
   templateUrl: './login.html',
-  styleUrl: './login.css'
+  styleUrls: ['./login.css']
 })
 export class Login {
   loginForm: FormGroup;
@@ -27,22 +29,30 @@ export class Login {
       password: ['', [Validators.required, Validators.minLength(6)]]
     });
 
-    // Get return URL from route
+    // Capture return URL if any
     this.route.queryParams.subscribe(params => {
       this.returnUrl = params['returnUrl'] || '/';
     });
   }
 
   onSubmit() {
-    if (this.loginForm.valid) {
-      const { email, password } = this.loginForm.value;
-      if (this.authService.login(email, password)) {
+  if (this.loginForm.valid) {
+    const { email, password } = this.loginForm.value;
+    console.log('Submitting login for', email);
+    this.authService.login(email, password).subscribe({
+      next: () => {
+        console.log('Login success, redirecting...');
         this.router.navigateByUrl(this.returnUrl);
-      } else {
-        this.error = 'Invalid email or password';
+      },
+      error: (err) => {
+        console.error('Login error:', err);
+        this.error = err.error?.message || 'Invalid email or password';
       }
-    } else {
-      this.loginForm.markAllAsTouched();
-    }
+    });
+  } else {
+    this.loginForm.markAllAsTouched();
   }
+}
+
+
 }

@@ -15,6 +15,11 @@ export class Signup implements OnInit {
   signupForm!: FormGroup;
   error = '';
 
+  roles = [
+    { label: 'Tenant', value: 'tenant' },
+    { label: 'Property Owner', value: 'owner' }
+  ];
+
   constructor(
     private fb: FormBuilder,
     private authService: AuthService,
@@ -27,40 +32,29 @@ export class Signup implements OnInit {
       email: ['', [Validators.required, Validators.email]],
       phone: ['', [Validators.required, Validators.pattern('^[0-9]{10}$')]],
       password: ['', [Validators.required, Validators.minLength(6)]],
+      role: ['', Validators.required]
     });
   }
 
   onSubmit(): void {
-
-    if (typeof window === 'undefined') {
-    console.warn('Running in server mode, skipping signup logic.');
-    return;
-  }
-    if (this.signupForm.valid) {
-      const { name, email, password, phone } = this.signupForm.value;
-
-      // Get existing users
-      const users = JSON.parse(localStorage.getItem('users') || '[]');
-
-      // Check if email already exists
-      const emailExists = users.some((u: any) => u.email === email);
-      if (emailExists) {
-        this.error = 'Email already exists';
-        return;
-      }
-
-      // Push new user
-      users.push({ name, email, phone, password });
-      localStorage.setItem('users', JSON.stringify(users));
-
-      // Optional: Also use AuthService if needed
-      this.authService.signup(name, email, password, phone);
-
-      // Redirect
-      this.router.navigate(['/']);
-    } else {
+    this.error = '';
+    if (this.signupForm.invalid) {
       this.signupForm.markAllAsTouched();
+      return;
     }
+
+    const formValue = this.signupForm.value;
+
+    // Call backend API via AuthService
+    this.authService.signup(formValue).subscribe({
+      next: () => {
+        // On success redirect to login page
+        this.router.navigate(['/login']);
+      },
+      error: (err: any) => {
+        this.error = err.error?.message || 'Registration failed. Please try again.';
+      }
+    });
   }
 
   signUpWithGoogle(): void {

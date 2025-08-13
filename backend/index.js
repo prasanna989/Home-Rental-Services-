@@ -6,6 +6,7 @@ const bodyParser = require('body-parser');
 const connectDB = require('./config/db');
 const contactRoutes = require('./routes/contact');
 const propertyRoutes = require('./routes/propertyRoutes');
+const authRoutes = require('./routes/auth');
 
 const app = express();
 
@@ -20,6 +21,7 @@ connectDB();
 // Routes
 app.use('/api/contact', contactRoutes);
 app.use('/api/properties', propertyRoutes);
+app.use('/api', authRoutes);
 
 // Starting Server
 app.get('/', (req, res) => {
