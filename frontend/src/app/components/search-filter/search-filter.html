@@ -21,7 +21,7 @@
       <input type="range" min="0" max="10000" step="100"
         [(ngModel)]="currentFilters.minPrice"
         (change)="filterService.updateFilters({ minPrice: currentFilters.minPrice })">
-      <span>${{currentFilters.minPrice}} - ${{currentFilters.maxPrice}}</span>
+      <span>₹{{currentFilters.minPrice}} - ₹{{currentFilters.maxPrice}}</span>
       <input type="range" min="0" max="10000" step="100"
         [(ngModel)]="currentFilters.maxPrice"
         (change)="filterService.updateFilters({ maxPrice: currentFilters.maxPrice })">

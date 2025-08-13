@@ -1,3 +1,4 @@
+/* ===== Home List Styles ===== */
 .home-list {
   padding: 2rem 0;
   text-align: center;
@@ -15,30 +16,57 @@
   margin-bottom: 2rem;
 }
 
+/* ===== Home Card Styles ===== */
 .home-card {
   border: 1px solid #ddd;
   border-radius: 8px;
   overflow: hidden;
   transition: transform 0.3s;
+  height: 100%; /* Ensure consistent height */
+  display: flex;
+  flex-direction: column; /* Stack content vertically */
 }
 
 .home-card:hover {
   transform: translateY(-5px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
+/* Image styles with placeholder fallback */
 .home-card img {
   width: 100%;
   height: 200px;
   object-fit: cover;
+  background-color: #f5f5f5; /* Fallback background */
+}
+
+.home-card img:not([src]),
+.home-card img[src=""] {
+  background-color: #f5f5f5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  content: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='48' viewBox='0 0 24 24' fill='none' stroke='%23ccc' stroke-width='1' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='3' y='3' width='18' height='18' rx='2' ry='2'%3E%3C/rect%3E%3Ccircle cx='8.5' cy='8.5' r='1.5'%3E%3C/circle%3E%3Cpolyline points='21 15 16 10 5 21'%3E%3C/polyline%3E%3C/svg%3E");
 }
 
 .home-info {
   padding: 1rem;
   text-align: left;
+  flex-grow: 1; /* Allow content to expand */
+  display: flex;
+  flex-direction: column;
 }
 
 .home-info h3 {
   margin: 0.5rem 0;
+  font-size: 1.1rem;
+  color: #333;
+}
+
+.home-info p {
+  margin: 0.25rem 0;
+  color: #666;
+  font-size: 0.9rem;
 }
 
 .price {
@@ -48,6 +76,12 @@
   margin: 0.5rem 0;
 }
 
+/* Status indicators */
+.status {
+  margin: 0.5rem 0;
+  font-size: 0.9rem;
+}
+
 .available {
   display: inline-block;
   background-color: #4CAF50;
@@ -55,9 +89,18 @@
   padding: 0.3rem 0.6rem;
   border-radius: 4px;
   font-size: 0.8rem;
-  margin-bottom: 0.5rem;
 }
 
+.booked {
+  display: inline-block;
+  background-color: #f44336;
+  color: white;
+  padding: 0.3rem 0.6rem;
+  border-radius: 4px;
+  font-size: 0.8rem;
+}
+
+/* Button styles */
 .home-card button {
   width: 100%;
   padding: 0.5rem;
@@ -66,8 +109,20 @@
   border: none;
   border-radius: 4px;
   cursor: pointer;
+  margin-top: auto; /* Push button to bottom */
+  transition: background-color 0.2s;
 }
 
+.home-card button:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
+
+.home-card button:hover:not(:disabled) {
+  background-color: #3e8e41;
+}
+
+/* View More button */
 .view-more {
   background-color: transparent;
   border: 2px solid #4CAF50;
@@ -84,6 +139,7 @@
   color: white;
 }
 
+/* Modal styles */
 .modal-overlay {
   position: fixed;
   top: 0;
@@ -103,8 +159,21 @@
   border-radius: 12px;
   max-width: 500px;
   width: 100%;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
 }
 
-.booked {
-  color: red;
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .homes-container {
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 1.5rem;
+  }
+  
+  .home-list h2 {
+    font-size: 1.75rem;
+  }
+  
+  .home-card img {
+    height: 180px;
+  }
 }
