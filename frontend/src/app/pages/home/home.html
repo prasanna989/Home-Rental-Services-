@@ -28,20 +28,7 @@
     </div>
   </section>
 
-  <!-- Price Slider Filters -->
-  <section class="filters container">
-    <h3>Filter by Price</h3>
-    <label>Min: ₹{{ minPrice }}</label>
-    <input type="range" min="0" max="10000" step="100"
-           [(ngModel)]="minPrice" (input)="applyFilters()">
-
-    <label>Max: ₹{{ maxPrice }}</label>
-    <input type="range" min="0" max="10000" step="100"
-           [(ngModel)]="maxPrice" (input)="applyFilters()">
-
-    <button (click)="resetFilters()">Reset Filters</button>
-    <button (click)="navigateToBrowseHomes()">Browse Homes</button>
-  </section>
+  
 
   <!-- Home Listings Section -->
   <section class="listings">
@@ -61,7 +48,6 @@
 
       <ng-template #noResults>
         <div class="no-results">
-          <img src="https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1f6ab.svg" alt="No results" class="no-results-icon">
           <h3>No properties match your search</h3>
           <p>Try adjusting your filters or search criteria</p>
           <button (click)="resetFilters()">Reset All Filters</button>

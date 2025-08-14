@@ -12,7 +12,7 @@ import { Router } from '@angular/router';
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, FormsModule, Header, HomeList, Footer, Navbar],
+  imports: [CommonModule, FormsModule, Header, HomeList, Footer],
   templateUrl: './home.html',
   styleUrls: ['./home.css']
 })
