@@ -12,6 +12,9 @@ export class HomeService {
   private apiUrl = 'http://localhost:5000/api/properties';
   private bookedHomes: Home[] = [];
 
+  // ✅ Cache for homes
+  homesCache: Home[] = [];
+
   constructor(private http: HttpClient, private authService: AuthService) {}
 
   getHomes(): Observable<Home[]> {
@@ -22,8 +25,22 @@ export class HomeService {
     return this.http.get<Home[]>(`${this.apiUrl}/my-properties`);
   }
 
+  // ✅ Uses cache if available
   getAvailableHomes(): Observable<Home[]> {
-    return this.http.get<Home[]>(`${this.apiUrl}?available=true`);
+    if (this.homesCache.length) {
+      return new Observable(observer => {
+        observer.next(this.homesCache);
+        observer.complete();
+      });
+    } else {
+      return new Observable(observer => {
+        this.http.get<Home[]>(`${this.apiUrl}?available=true`).subscribe(data => {
+          this.homesCache = data;
+          observer.next(data);
+          observer.complete();
+        });
+      });
+    }
   }
 
   getHomeById(id: string): Observable<Home> {
@@ -37,7 +54,15 @@ export class HomeService {
     if (filters.maxPrice) params.append('price[lte]', filters.maxPrice.toString());
     if (filters.propertyTypes.length) params.append('type', filters.propertyTypes.join(','));
     if (filters.amenities.length) params.append('amenities', filters.amenities.join(','));
-    return this.http.get<Home[]>(`${this.apiUrl}?${params.toString()}`);
+
+    return new Observable(observer => {
+      this.http.get<Home[]>(`${this.apiUrl}?${params.toString()}`).subscribe(data => {
+        // ✅ Save filtered results to cache
+        this.homesCache = data;
+        observer.next(data);
+        observer.complete();
+      });
+    });
   }
 
   addHome(homeData: FormData): Observable<Home> {
@@ -49,7 +74,7 @@ export class HomeService {
   }
 
   removeHome(id: string): Observable<void> {
-  return this.http.delete<void>(`${this.apiUrl}/${id}`);
+    return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
 
   updateHomeStatus(id: string, status: boolean): Observable<Home> {
@@ -77,5 +102,10 @@ export class HomeService {
     const formData = new FormData();
     formData.append('image', imageFile);
     return this.http.post<{ url: string, public_id: string }>(`${this.apiUrl}/upload`, formData);
+  }
+
+  // ✅ Clear cache when needed (optional)
+  clearCache() {
+    this.homesCache = [];
   }
 }

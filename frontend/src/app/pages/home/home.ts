@@ -1,51 +1,70 @@
-import { Component, inject, ViewChild, signal, Inject, PLATFORM_ID } from '@angular/core';
+import { Component, inject, ViewChild, Inject, PLATFORM_ID } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { HomeService } from '../../services/home.service';
-import { FilterService } from '../../services/filter.service';
-import { map, switchMap } from 'rxjs/operators';
+import { Home as HomeModel } from '../../models/home.model';
 import { HomeList } from '../../components/home-list/home-list';
 import { Header } from '../../components/header/header';
 import { Footer } from '../../components/footer/footer';
 import { Navbar } from '../../components/navbar/navbar';
-import { toSignal } from '@angular/core/rxjs-interop';
-import { Home as HomeModel } from '../../models/home.model';
-
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, Header, HomeList, Footer],
+  imports: [CommonModule, FormsModule, Header, HomeList, Footer],
   templateUrl: './home.html',
-  styleUrl: './home.css'
+  styleUrls: ['./home.css']
 })
 export class HomePage {
   @ViewChild(Navbar) navbar!: Navbar;
+
   homeService = inject(HomeService);
-  filterService = inject(FilterService);
-  
-  filteredHomes = toSignal(
-    this.filterService.filters$.pipe(
-      switchMap(filters => this.homeService.getFilteredHomes(filters))
-    ),
-    { initialValue: [] as HomeModel[] }
-  );
+  router = inject(Router);
+
+  allHomes: HomeModel[] = [];
+  filteredHomes: HomeModel[] = [];
+
+  minPrice = 0;
+  maxPrice = 10000;
 
   constructor(@Inject(PLATFORM_ID) private platformId: Object) {}
 
-  filterByType(type: string) {
-    this.filterService.updateFilters({
-      propertyTypes: [type]
+  ngOnInit() {
+    // Load homes once
+    this.homeService.getAvailableHomes().subscribe(homes => {
+      this.allHomes = homes;
+      this.filteredHomes = [...homes];
+      this.homeService.homesCache = this.filteredHomes; // store for Browse page
     });
   }
 
+  applyFilters() {
+    this.filteredHomes = this.allHomes.filter(
+      home => home.price >= this.minPrice && home.price <= this.maxPrice
+    );
+    this.homeService.homesCache = this.filteredHomes;
+  }
+
+  filterByType(type: string) {
+    this.filteredHomes = this.allHomes.filter(
+      home =>
+        home.type === type &&
+        home.price >= this.minPrice &&
+        home.price <= this.maxPrice
+    );
+    this.homeService.homesCache = this.filteredHomes;
+  }
+
   resetFilters() {
-    this.filterService.updateFilters({
-      location: '',
-      minPrice: 0,
-      maxPrice: 10000,
-      propertyTypes: [],
-      amenities: []
-    });
+    this.minPrice = 0;
+    this.maxPrice = 10000;
+    this.filteredHomes = [...this.allHomes];
+    this.homeService.homesCache = this.filteredHomes;
+  }
+
+  navigateToBrowseHomes() {
+    this.router.navigate(['/browse-home']);
   }
 
   bookHome(homeId: string) {

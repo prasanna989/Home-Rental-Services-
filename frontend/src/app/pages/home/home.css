@@ -75,6 +75,68 @@
   font-weight: 500;
 }
 
+/* ===== Filters Section ===== */
+.filters.container {
+  padding: 15px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  background-color: #ffffff;
+}
+
+.filters h3 {
+  font-size: 1.2rem;
+  margin-bottom: 10px;
+  font-weight: 600;
+  color: #333;
+}
+
+.filters label {
+  display: block;
+  margin-top: 10px;
+  font-weight: 500;
+  color: #555;
+}
+
+input[type="range"] {
+  width: 100%;
+  margin: 5px 0 15px;
+  accent-color: #28a745;
+}
+
+.filter-buttons {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+  flex-wrap: wrap;
+}
+
+.filter-btn {
+  background-color: #28a745; /* Green */
+  color: white;
+  font-size: 16px;
+  font-weight: 500;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  flex: 1 1 auto;
+  text-align: center;
+}
+
+.filter-btn:hover {
+  background-color: #218838; /* Darker green */
+}
+
+.browse-btn {
+  background-color: #218838;
+}
+
+.browse-btn:hover {
+  background-color: #1a6f2b;
+}
+
 /* ===== Listings Section ===== */
 .listings {
   padding: 2.5rem 0;
@@ -159,7 +221,6 @@
 
 /* ===== Mobile Search Toggle ===== */
 .mobile-search-toggle {
-  
   background-color: #4CAF50;
   color: white;
   border: none;
@@ -232,5 +293,13 @@
   .no-results button {
     width: 100%;
     max-width: 200px;
+  }
+  
+  .filter-buttons {
+    flex-direction: column;
+  }
+  
+  .filter-btn {
+    width: 100%;
   }
 }
