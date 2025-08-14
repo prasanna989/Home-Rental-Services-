@@ -14,13 +14,14 @@ export const routes: Routes = [
   { path: 'about', component: About, title: 'About Us' },
   { path: 'login', component: Login, title: 'Login' },
   { path: 'signup', component: Signup, title: 'Create Account' },
-  { path: 'users-list', component: UserListComponent },
-  { path: 'contact', component: Contact },
+  { path: 'users-list', component: UserListComponent, title: 'User List' },
+  { path: 'contact', component: Contact, title: 'Contact Us' },
   {
     path: 'admin/dashboard',
     component: AdminDashboardComponent,
     canActivate: [AuthGuard],
-    data: { roles: ['owner'] }
+    data: { roles: ['owner'] },
+    title: 'Admin Dashboard'
   },
   {
     path: 'profile',
@@ -44,6 +45,6 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/property-details/property-details').then(m => m.PropertyDetails),
     title: 'Property Details'
   }, 
-  { path: 'home', component: HomePage },
-  { path: '**', redirectTo: '' }
+  { path: 'home', component: HomePage, title: 'Home Rental Service' },
+  { path: '**', redirectTo: '', title: 'Not Found' }
 ];

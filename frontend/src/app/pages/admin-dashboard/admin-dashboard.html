@@ -73,105 +73,109 @@
           </tr>
         </thead>
         <tbody>
-          <ng-container *ngFor="let home of homes">
-            <tr>
-              <td><img [src]="home.imageUrl" [alt]="home.title" class="property-image" /></td>
-              <td>{{ home.title }}</td>
-              <td>{{ home.type }}</td>
-              <td>₹{{ home.price }}</td>
-              <td>₹{{ home.rentPerDay }}</td>
-              <td>{{ home.location }}</td>
-              <td>
-                <div class="amenities-list">
-                  <span *ngFor="let amenity of home.amenities" class="amenity-badge">{{ amenity }}</span>
-                </div>
-              </td>
-              <td>
-                <span [class]="home.available ? 'available' : 'unavailable'" class="status">
-                  {{ home.available ? 'Available' : 'Unavailable' }}
-                </span>
-              </td>
-              <td class="action-cell">
-                <div class="action-buttons">
-                  <button class="edit-btn" (click)="editProperty(home)">Edit</button>
-                  <button class="remove-btn" (click)="removeProperty(home._id)">Remove</button>
-                </div>
-              </td>
-            </tr>
+          <tr *ngFor="let home of homes">
+            <td><img [src]="home.imageUrl" [alt]="home.title" class="property-image" /></td>
+            <td>{{ home.title }}</td>
+            <td>{{ home.type }}</td>
+            <td>₹{{ home.price }}</td>
+            <td>₹{{ home.rentPerDay }}</td>
+            <td>{{ home.location }}</td>
+            <td>
+              <div class="amenities-list">
+                <span *ngFor="let amenity of home.amenities" class="amenity-badge">{{ amenity }}</span>
+              </div>
+            </td>
+            <td>
+              <span [class]="home.available ? 'available' : 'unavailable'" class="status">
+                {{ home.available ? 'Available' : 'Unavailable' }}
+              </span>
+            </td>
+            <td class="action-cell">
+              <div class="action-buttons">
+                <button class="edit-btn" (click)="editProperty(home)">Edit</button>
+                <button class="remove-btn" (click)="removeProperty(home._id)">Remove</button>
+              </div>
+            </td>
+          </tr>
 
-            <tr *ngIf="isEditing && editingProperty._id === home._id" class="edit-row">
-              <td colspan="9">
-                <form #editForm="ngForm" (ngSubmit)="saveChanges(editForm)" class="inline-edit-form" enctype="multipart/form-data">
-                  <div class="form-row">
-                    <div class="form-group">
-                      <input type="text" [(ngModel)]="editingProperty.title" name="editTitle" required />
-                    </div>
-                    <div class="form-group">
-                      <input type="text" [(ngModel)]="editingProperty.type" name="editType" required />
-                    </div>
-                  </div>
-                  
-                  <div class="form-row">
-                    <div class="form-group">
-                      <input type="number" [(ngModel)]="editingProperty.price" name="editPrice" required />
-                    </div>
-                    <div class="form-group">
-                      <input type="number" [(ngModel)]="editingProperty.rentPerDay" name="editRentPerDay" required />
-                    </div>
-                  </div>
-                  
+          <tr *ngIf="isEditing" class="edit-row">
+            <td colspan="9">
+              <form #editForm="ngForm" (ngSubmit)="saveChanges(editForm)" class="inline-edit-form" enctype="multipart/form-data">
+                <div class="form-row">
                   <div class="form-group">
-                    <input type="text" [(ngModel)]="editingProperty.location" name="editLocation" required />
+                    <label>Title</label>
+                    <input type="text" [(ngModel)]="editingProperty.title" name="editTitle" required />
                   </div>
-                  
                   <div class="form-group">
-                    <select [(ngModel)]="editingProperty.available" name="editAvailable" required>
-                      <option [ngValue]="true">Available</option>
-                      <option [ngValue]="false">Unavailable</option>
-                    </select>
+                    <label>Type</label>
+                    <input type="text" [(ngModel)]="editingProperty.type" name="editType" required />
                   </div>
-                  
-                  <div class="form-group file-upload-container">
-                    <label class="file-upload-label">
-                      <input type="file" (change)="onEditFileSelected($event)" name="editImage">
-                      <span class="file-upload-button">Change Image</span>
-                      <span class="file-upload-name">{{selectedEditFile?.name || 'Keep current'}}</span>
-                    </label>
+                </div>
+                
+                <div class="form-row">
+                  <div class="form-group">
+                    <label>Price/Month</label>
+                    <input type="number" [(ngModel)]="editingProperty.price" name="editPrice" required />
                   </div>
-                  <img *ngIf="editingProperty.imageUrl" [src]="editingProperty.imageUrl" class="preview-image">
+                  <div class="form-group">
+                    <label>Rent/Day</label>
+                    <input type="number" [(ngModel)]="editingProperty.rentPerDay" name="editRentPerDay" required />
+                  </div>
+                </div>
+                
+                <div class="form-group">
+                  <label>Location</label>
+                  <input type="text" [(ngModel)]="editingProperty.location" name="editLocation" required />
+                </div>
+                
+                <div class="form-group">
+                  <label>Status</label>
+                  <select [(ngModel)]="editingProperty.available" name="editAvailable" required>
+                    <option [ngValue]="true">Available</option>
+                    <option [ngValue]="false">Unavailable</option>
+                  </select>
+                </div>
+                
+                <div class="form-group file-upload-container">
+                  <label class="file-upload-label">
+                    <input type="file" (change)="onEditFileSelected($event)" name="editImage">
+                    <span class="file-upload-button">Change Image</span>
+                    <span class="file-upload-name">{{selectedEditFile?.name || 'Keep current'}}</span>
+                  </label>
+                </div>
+                <img *ngIf="editingProperty.imageUrl" [src]="editingProperty.imageUrl" class="preview-image">
 
-                  <div class="form-group amenity-section">
-                    <div class="amenity-input-group">
-                      <input
-                        type="text"
-                        [(ngModel)]="newAmenity"
-                        name="editAmenity"
-                        placeholder="Add Amenity"
-                        (keydown.enter)="$event.preventDefault(); addAmenityToEdit()"
-                        class="amenity-input"
-                      />
-                      <button type="button" (click)="addAmenityToEdit()" class="add-amenity-btn">
-                        Add
-                      </button>
-                    </div>
-                    <div class="amenity-tags">
-                      <span *ngFor="let amenity of editingProperty.amenities; let i = index" class="amenity-tag">
-                        {{ amenity }}
-                        <button type="button" (click)="removeEditAmenity(i)" class="remove-amenity-btn">×</button>
-                      </span>
-                    </div>
-                  </div>
-
-                  <div class="form-actions">
-                    <button type="submit" class="save-btn" [disabled]="!editForm.valid || isUpdating">
-                      {{ isUpdating ? 'Saving...' : 'Save' }}
+                <div class="form-group amenity-section">
+                  <div class="amenity-input-group">
+                    <input
+                      type="text"
+                      [(ngModel)]="newAmenity"
+                      name="editAmenity"
+                      placeholder="Add Amenity"
+                      (keydown.enter)="$event.preventDefault(); addAmenityToEdit()"
+                      class="amenity-input"
+                    />
+                    <button type="button" (click)="addAmenityToEdit()" class="add-amenity-btn">
+                      Add
                     </button>
-                    <button type="button" class="cancel-btn" (click)="cancelEdit()">Cancel</button>
                   </div>
-                </form>
-              </td>
-            </tr>
-          </ng-container>
+                  <div class="amenity-tags">
+                    <span *ngFor="let amenity of editingProperty.amenities; let i = index" class="amenity-tag">
+                      {{ amenity }}
+                      <button type="button" (click)="removeEditAmenity(i)" class="remove-amenity-btn">×</button>
+                    </span>
+                  </div>
+                </div>
+
+                <div class="form-actions">
+                  <button type="submit" class="save-btn" [disabled]="!editForm.valid || isUpdating">
+                    {{ isUpdating ? 'Saving...' : 'Save' }}
+                  </button>
+                  <button type="button" class="cancel-btn" (click)="cancelEdit()">Cancel</button>
+                </div>
+              </form>
+            </td>
+          </tr>
         </tbody>
       </table>
     </div>

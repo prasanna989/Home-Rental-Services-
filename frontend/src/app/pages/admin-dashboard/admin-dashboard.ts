@@ -1,11 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, NgForm } from '@angular/forms';
 import { HomeService } from '../../services/home.service';
 import { Home } from '../../models/home.model';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
-
 
 @Component({
   selector: 'app-admin-dashboard',
@@ -16,7 +15,8 @@ import { AuthService } from '../../services/auth.service';
 })
 export class AdminDashboardComponent implements OnInit {
   homes: Home[] = [];
-  newAmenity: string = '';
+  errorMessage: string = '';
+  newAmenity = '';
   newProperty: Omit<Home, '_id'> = {
     title: '',
     type: '',
@@ -24,7 +24,7 @@ export class AdminDashboardComponent implements OnInit {
     rentPerDay: 0,
     location: '',
     available: true,
-    imageUrl: '', 
+    imageUrl: '',
     amenities: []
   };
   editingProperty: Home = {
@@ -40,41 +40,51 @@ export class AdminDashboardComponent implements OnInit {
   };
   selectedFile: File | null = null;
   selectedEditFile: File | null = null;
-  isAdding: boolean = false;
-  isUpdating: boolean = false;
-  isEditing: boolean = false;
+  isAdding = false;
+  isUpdating = false;
+  isEditing = false;
+  loading = false;
 
-  constructor(private homeService: HomeService,
+  constructor(
+    private homeService: HomeService,
     private authService: AuthService,
-    private router: Router) {}
-
-  ngOnInit(): void {
-    // Check if user is an owner
-    const isOwner = this.authService.getLoginRole() === 'owner';
-    if (!isOwner) {
-      this.router.navigate(['/home']); // block non-owners
-      return;
-    }
-
-    // Fetch only owner's properties
-    this.homeService.getMyProperties().subscribe({
-      next: (properties) => this.homes = properties,
-      error: (err) => console.error('Error fetching owner properties', err)
-    });
+    private router: Router,
+    private cdr: ChangeDetectorRef
+  ) {
+    // disable route reuse to force reload on same route
+    this.router.routeReuseStrategy.shouldReuseRoute = () => false;
   }
 
+  ngOnInit(): void {
+    const role = this.authService.getLoginRole();
+    if (role !== 'owner') {
+      this.router.navigate(['/home']);
+      return;
+    }
+    this.loadProperties();
+  }
 
   loadProperties(): void {
+    this.loading = true;
     this.homeService.getHomes().subscribe({
-      next: (homes) => this.homes = homes,
-      error: (err) => console.error('Error loading properties', err)
+      next: (properties) => {
+        this.homes = properties ?? [];
+        this.loading = false;
+        this.cdr.detectChanges(); // force Angular to detect changes
+      },
+      error: (err) => {
+        console.error('Error fetching properties', err);
+        this.homes = [];
+        this.loading = false;
+        this.cdr.detectChanges();
+      }
     });
   }
 
   addProperty(form: NgForm): void {
     if (this.isAdding || !form.valid) return;
-    
     this.isAdding = true;
+
     const formData = new FormData();
     formData.append('title', this.newProperty.title);
     formData.append('type', this.newProperty.type);
@@ -82,21 +92,16 @@ export class AdminDashboardComponent implements OnInit {
     formData.append('rentPerDay', this.newProperty.rentPerDay.toString());
     formData.append('location', this.newProperty.location);
     formData.append('available', this.newProperty.available.toString());
-    
-    this.newProperty.amenities.forEach(amenity => {
-      formData.append('amenities[]', amenity);
-    });
-
-    if (this.selectedFile) {
-      formData.append('image', this.selectedFile);
-    }
+    this.newProperty.amenities.forEach(a => formData.append('amenities[]', a));
+    if (this.selectedFile) formData.append('image', this.selectedFile);
 
     this.homeService.addHome(formData).subscribe({
       next: (addedHome) => {
-        this.homes = [...this.homes, addedHome];
+        this.homes = [addedHome, ...this.homes]; // newest first
         this.resetForm();
         form.resetForm();
         this.isAdding = false;
+        this.cdr.detectChanges();
       },
       error: (err) => {
         console.error('Error adding property', err);
@@ -108,17 +113,18 @@ export class AdminDashboardComponent implements OnInit {
   removeProperty(_id: string): void {
     if (!confirm('Are you sure you want to delete this property?')) return;
 
-    const removedIndex = this.homes.findIndex(home => home._id === _id);
+    const removedIndex = this.homes.findIndex(h => h._id === _id);
     const removedHome = this.homes[removedIndex];
-    
-    this.homes = this.homes.filter(home => home._id !== _id);
+    this.homes = this.homes.filter(h => h._id !== _id);
+    this.cdr.detectChanges();
 
     this.homeService.removeHome(_id).subscribe({
-      next: () => console.log('Property removed successfully'),
+      next: () => {},
       error: (err) => {
         console.error('Error removing property', err);
         this.homes.splice(removedIndex, 0, removedHome);
         this.homes = [...this.homes];
+        this.cdr.detectChanges();
       }
     });
   }
@@ -126,6 +132,7 @@ export class AdminDashboardComponent implements OnInit {
   editProperty(home: Home): void {
     this.editingProperty = { ...home };
     this.isEditing = true;
+    this.cdr.detectChanges();
   }
 
   cancelEdit(): void {
@@ -142,65 +149,59 @@ export class AdminDashboardComponent implements OnInit {
       amenities: []
     };
     this.selectedEditFile = null;
+    this.newAmenity = '';
+    this.cdr.detectChanges();
   }
 
-saveChanges(editForm: NgForm): void {
-    if (!this.isEditing || !this.editingProperty._id || this.isUpdating || !editForm.valid) return;
-    
-    this.isUpdating = true;
-    const formData = new FormData();
-    formData.append('title', this.editingProperty.title);
-    formData.append('type', this.editingProperty.type);
-    formData.append('price', this.editingProperty.price.toString());
-    formData.append('rentPerDay', this.editingProperty.rentPerDay.toString());
-    formData.append('location', this.editingProperty.location);
-    formData.append('available', this.editingProperty.available.toString());
-    
-    this.editingProperty.amenities.forEach(amenity => {
-      formData.append('amenities', JSON.stringify(this.editingProperty.amenities));
-    });
+  saveChanges(editForm: NgForm): void {
+  if (!this.isEditing || !this.editingProperty._id || this.isUpdating || !editForm.valid) return;
+  
+  this.isUpdating = true;
+  const originalHomes = [...this.homes]; // Store original state for rollback
 
-    if (this.selectedEditFile) {
-      formData.append('image', this.selectedEditFile);
-    }
+  const formData = new FormData();
+  formData.append('title', this.editingProperty.title);
+  formData.append('type', this.editingProperty.type);
+  formData.append('price', this.editingProperty.price.toString());
+  formData.append('rentPerDay', this.editingProperty.rentPerDay.toString());
+  formData.append('location', this.editingProperty.location);
+  formData.append('available', this.editingProperty.available.toString());
+  this.editingProperty.amenities.forEach(a => formData.append('amenities', a)); // Changed from 'amenities[]' to 'amenities'
+  
+  if (this.selectedEditFile) {
+    formData.append('image', this.selectedEditFile);
+  }
 
-    const updatedIndex = this.homes.findIndex(home => home._id === this.editingProperty._id);
-    if (updatedIndex !== -1) {
-      const updatedHome = { 
-        ...this.editingProperty,
-        // Include the new image URL if a file was selected
-        imageUrl: this.selectedEditFile ? this.editingProperty.imageUrl : this.homes[updatedIndex].imageUrl
-      };
+  // Optimistic UI update
+  this.homes = this.homes.map(h => 
+    h._id === this.editingProperty._id ? {...this.editingProperty} : h
+  );
+
+  this.homeService.updateHome(this.editingProperty._id, formData).subscribe({
+    next: (updatedHome) => {
+      // Final update with server response
+      this.homes = this.homes.map(h => 
+        h._id === updatedHome._id ? updatedHome : h
+      );
+      this.cancelEdit();
+      this.isUpdating = false;
+    },
+    error: (err) => {
+      console.error('Error updating property', err);
+      // Rollback on error
+      this.homes = originalHomes;
+      this.isUpdating = false;
+      this.cdr.detectChanges(); // Force change detection if needed
       
-      // Create new array to trigger change detection
-      this.homes = [
-        ...this.homes.slice(0, updatedIndex),
-        updatedHome,
-        ...this.homes.slice(updatedIndex + 1)
-      ];
+      // Show error message (optional)
+      this.errorMessage = 'Failed to save changes. Please try again.';
+      setTimeout(() => this.errorMessage = '', 3000);
+    },
+    complete: () => {
+      this.isUpdating = false; // Ensure isUpdating is always reset
     }
-
-    this.homeService.updateHome(this.editingProperty._id, formData).subscribe({
-      next: (updatedHome) => {
-        this.homes = this.homes.map(home => 
-          home._id === updatedHome._id ? updatedHome : home
-        );
-        this.cancelEdit();
-        this.isUpdating = false;
-      },
-      error: (err) => {
-        console.error('Error updating property', err);
-        if (updatedIndex !== -1) {
-          this.homes = [
-            ...this.homes.slice(0, updatedIndex),
-            this.homes[updatedIndex], 
-            ...this.homes.slice(updatedIndex + 1)
-          ];
-        }
-        this.isUpdating = false;
-      }
-    });
-  }
+  });
+}
 
   resetForm(): void {
     this.newProperty = {
@@ -215,15 +216,17 @@ saveChanges(editForm: NgForm): void {
     };
     this.newAmenity = '';
     this.selectedFile = null;
+    this.cdr.detectChanges();
   }
 
   onFileSelected(event: Event): void {
     const input = event.target as HTMLInputElement;
-    if (input.files && input.files.length > 0) {
+    if (input.files?.length) {
       this.selectedFile = input.files[0];
       const reader = new FileReader();
       reader.onload = () => {
         this.newProperty.imageUrl = reader.result as string;
+        this.cdr.detectChanges();
       };
       reader.readAsDataURL(this.selectedFile);
     }
@@ -231,11 +234,12 @@ saveChanges(editForm: NgForm): void {
 
   onEditFileSelected(event: Event): void {
     const input = event.target as HTMLInputElement;
-    if (input.files && input.files.length > 0 && this.isEditing) {
+    if (input.files?.length && this.isEditing) {
       this.selectedEditFile = input.files[0];
       const reader = new FileReader();
       reader.onload = () => {
         this.editingProperty.imageUrl = reader.result as string;
+        this.cdr.detectChanges();
       };
       reader.readAsDataURL(this.selectedEditFile);
     }
@@ -245,18 +249,21 @@ saveChanges(editForm: NgForm): void {
     const amenity = this.newAmenity.trim();
     if (amenity && !this.newProperty.amenities.includes(amenity)) {
       this.newProperty.amenities.push(amenity);
+      this.cdr.detectChanges();
     }
     this.newAmenity = '';
   }
 
   removeAmenity(index: number): void {
     this.newProperty.amenities.splice(index, 1);
+    this.cdr.detectChanges();
   }
 
   addAmenityToEdit(): void {
     const amenity = this.newAmenity.trim();
     if (amenity && this.isEditing && !this.editingProperty.amenities.includes(amenity)) {
       this.editingProperty.amenities.push(amenity);
+      this.cdr.detectChanges();
     }
     this.newAmenity = '';
   }
@@ -264,6 +271,7 @@ saveChanges(editForm: NgForm): void {
   removeEditAmenity(index: number): void {
     if (this.isEditing) {
       this.editingProperty.amenities.splice(index, 1);
+      this.cdr.detectChanges();
     }
   }
 }

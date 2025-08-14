@@ -1,3 +1,4 @@
+<!-- booking-form.component.html -->
 <div class="booking-form-container">
   <div class="booking-card">
     <h2 class="title">{{ home.title }}</h2>
@@ -6,12 +7,28 @@
     <form (ngSubmit)="submitBooking()">
       <div class="form-group">
         <label for="checkIn">Check-In Date:</label>
-        <input type="date" id="checkIn" [(ngModel)]="checkInDate" name="checkIn" required />
+        <input 
+          type="date" 
+          id="checkIn" 
+          [(ngModel)]="checkInDate" 
+          name="checkIn" 
+          [min]="minDate"
+          (change)="onCheckInChange()"
+          required 
+        />
       </div>
 
       <div class="form-group">
         <label for="checkOut">Check-Out Date:</label>
-        <input type="date" id="checkOut" [(ngModel)]="checkOutDate" name="checkOut" required />
+        <input 
+          type="date" 
+          id="checkOut" 
+          [(ngModel)]="checkOutDate" 
+          name="checkOut" 
+          [min]="minCheckOutDate || minDate"
+          required 
+          [disabled]="!checkInDate"
+        />
       </div>
 
       <div class="form-summary">
@@ -26,4 +43,3 @@
     </form>
   </div>
 </div>
-

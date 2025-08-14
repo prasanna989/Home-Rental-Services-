@@ -9,8 +9,7 @@
   <div class="profile-content">
     @if (authService.currentUser(); as user) {
       <div class="profile-image-section">
-        <img [src]="previewImageUrl || user.profileImageUrl || 'assets/default-profile.png'" 
-             alt="Profile Image" class="profile-image">
+        <img src="https://imgs.search.brave.com/UHB2-JCLL0k8KOvN1ny4jQsRkFcyIYkUychU_KRBPpA/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly90NC5m/dGNkbi5uZXQvanBn/LzExLzU5LzUxLzkx/LzM2MF9GXzExNTk1/MTkxMzJfdmNnc2g0/OGtCdGp0Q0dPNmZ2/Ympnb1VkQXJrOHQ5/dEcuanBn" alt="">
         @if (isEditing) {
           <div class="image-upload">
             <input type="file" accept="image/*" (change)="onFileSelected($event)">

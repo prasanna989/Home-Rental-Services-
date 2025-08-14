@@ -13,7 +13,7 @@ export class AuthGuard implements CanActivate {
     state: RouterStateSnapshot
   ): boolean {
     const isLoggedIn = this.authService.isLoggedIn();
-    const loginRole = this.authService.getLoginRole(); // Get the selected role
+    const loginRole = this.authService.getLoginRole(); // This now also works after refresh
 
     if (!isLoggedIn) {
       // Not logged in → redirect to login page

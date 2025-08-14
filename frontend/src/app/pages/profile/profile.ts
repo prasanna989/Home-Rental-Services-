@@ -16,7 +16,7 @@ import { Router } from '@angular/router';
 })
 
 export class Profile {
-  @Input() propertyId: string = ''; // Fixed Input declaration
+  @Input() propertyId: string = ''; 
   
   authService = inject(AuthService);
   isEditing = false;

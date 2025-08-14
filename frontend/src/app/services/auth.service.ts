@@ -4,11 +4,8 @@ import { NotificationService } from './notification.service';
 import { isPlatformBrowser } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { tap } from 'rxjs/operators';
-import { Observable, of } from 'rxjs';
-// import { decodeJwt } from '../utils/jwt-helper';
-
+import { Observable } from 'rxjs';
 import { jwtDecode } from 'jwt-decode';
-
 
 interface User {
   id?: string;
@@ -37,7 +34,6 @@ interface PropertyListing {
 })
 export class AuthService {
   private apiUrl = 'http://localhost:5000/api';
-
   private users: User[] = [
     {
       email: 'test@example.com',
@@ -50,8 +46,8 @@ export class AuthService {
       favorites: ['1', '2']
     }
   ];
-
   private propertyListings: PropertyListing[] = [];
+
   isAuthenticated = signal(false);
   currentUser = signal<User | null>(null);
 
@@ -64,7 +60,6 @@ export class AuthService {
     @Inject(PLATFORM_ID) private platformId: Object
   ) {
     this.initializeAuthState();
-
   }
 
   private initializeAuthState(): void {
@@ -76,10 +71,14 @@ export class AuthService {
   private checkLocalStorage(): void {
     try {
       const userData = localStorage.getItem('loggedInUser');
+      const storedRole = localStorage.getItem('loginRole'); // ✅ read stored role
       if (userData) {
         const user = JSON.parse(userData);
         this.isAuthenticated.set(true);
         this.currentUser.set(user);
+      }
+      if (storedRole) {
+        this.loginRole = storedRole as 'owner' | 'tenant';
       }
     } catch (error) {
       console.error('Error parsing user data from localStorage:', error);
@@ -90,9 +89,11 @@ export class AuthService {
   private clearAuthData(): void {
     if (isPlatformBrowser(this.platformId)) {
       localStorage.removeItem('loggedInUser');
+      localStorage.removeItem('loginRole'); // ✅ clear role too
     }
     this.isAuthenticated.set(false);
     this.currentUser.set(null);
+    this.loginRole = '';
   }
 
   private persistUserData(user: User): void {
@@ -105,18 +106,23 @@ export class AuthService {
     }
   }
 
-setLoginRole(role: 'owner' | 'tenant') {
-  this.loginRole = role;
-}
+  setLoginRole(role: 'owner' | 'tenant') {
+    this.loginRole = role;
+    if (isPlatformBrowser(this.platformId)) {
+      localStorage.setItem('loginRole', role); // ✅ store role persistently
+    }
+  }
 
-// Method to get login role
-getLoginRole(): 'owner' | 'tenant' | '' {
-  return this.loginRole;
-}
+  getLoginRole(): 'owner' | 'tenant' | '' {
+    if (!this.loginRole && isPlatformBrowser(this.platformId)) {
+      const storedRole = localStorage.getItem('loginRole');
+      if (storedRole) {
+        this.loginRole = storedRole as 'owner' | 'tenant';
+      }
+    }
+    return this.loginRole;
+  }
 
-
-
-  // Signup with backend API
   signup(userData: { name: string; email: string; password: string; phone: string }): Observable<any> {
     return this.http.post(`${this.apiUrl}/register`, userData).pipe(
       tap({
@@ -131,59 +137,49 @@ getLoginRole(): 'owner' | 'tenant' | '' {
     );
   }
 
-  // Login with backend API, save token & user info
-login(email: string, password: string, role: 'owner' | 'tenant'): Observable<any> {
-  return this.http.post<{ token: string }>(`${this.apiUrl}/login`, { email, password }).pipe(
-    tap({
-      next: (res) => {
-        console.log('Login response:', res);
-        const userFromToken = jwtDecode(res.token) as User;
-        this.isAuthenticated.set(true);
-        this.currentUser.set(userFromToken);
-        this.setLoginRole(role);  // store the role
-        if (isPlatformBrowser(this.platformId)) {
-          localStorage.setItem('jwtToken', res.token);
-          localStorage.setItem('loggedInUser', JSON.stringify(userFromToken));
+  login(email: string, password: string, role: 'owner' | 'tenant'): Observable<any> {
+    return this.http.post<{ token: string }>(`${this.apiUrl}/login`, { email, password }).pipe(
+      tap({
+        next: (res) => {
+          console.log('Login response:', res);
+          const userFromToken = jwtDecode(res.token) as User;
+          this.isAuthenticated.set(true);
+          this.currentUser.set(userFromToken);
+          this.setLoginRole(role); // ✅ now persists to localStorage
+          if (isPlatformBrowser(this.platformId)) {
+            localStorage.setItem('jwtToken', res.token);
+            localStorage.setItem('loggedInUser', JSON.stringify(userFromToken));
+          }
+          this.notification.success('Login successful!');
+        },
+        error: (err) => {
+          this.notification.error(err.error?.message || 'Login failed.');
         }
-        this.notification.success('Login successful!');
-      },
-      error: (err) => {
-        this.notification.error(err.error?.message || 'Login failed.');
-      }
-    })
-  );
-}
-
-
-
-
-
-
+      })
+    );
+  }
 
   logout(): void {
     this.isAuthenticated.set(false);
     this.currentUser.set(null);
     if (isPlatformBrowser(this.platformId)) {
-    localStorage.removeItem('jwtToken');
-    localStorage.removeItem('loggedInUser');
-  }
+      localStorage.removeItem('jwtToken');
+      localStorage.removeItem('loggedInUser');
+      localStorage.removeItem('loginRole'); // ✅ remove role
+    }
     this.notification.info('You have been logged out.');
     this.router.navigate(['/login']);
   }
 
   isLoggedIn(): boolean {
-  if (!isPlatformBrowser(this.platformId)) return false;
-  return !!localStorage.getItem('jwtToken');
-}
+    if (!isPlatformBrowser(this.platformId)) return false;
+    return !!localStorage.getItem('jwtToken');
+  }
 
   updateProfile(updatedUser: User): boolean {
     const index = this.users.findIndex(u => u.email === updatedUser.email);
-
     if (index === -1) return false;
-
-    // Preserve password if not being updated
     updatedUser.password = updatedUser.password || this.users[index].password;
-
     this.users[index] = updatedUser;
     this.currentUser.set(updatedUser);
     this.persistUserData(updatedUser);
@@ -191,11 +187,9 @@ login(email: string, password: string, role: 'owner' | 'tenant'): Observable<any
     return true;
   }
 
-  // Favorite properties methods
   addFavoriteProperty(propertyId: string): void {
     const user = this.currentUser();
     if (!user || user.favorites.includes(propertyId)) return;
-
     user.favorites.push(propertyId);
     this.currentUser.set({ ...user });
     this.updateProfile(user);
@@ -205,17 +199,19 @@ login(email: string, password: string, role: 'owner' | 'tenant'): Observable<any
   removeFavoriteProperty(propertyId: string): void {
     const user = this.currentUser();
     if (!user) return;
-
     user.favorites = user.favorites.filter(id => id !== propertyId);
     this.currentUser.set({ ...user });
     this.updateProfile(user);
     this.notification.info('Removed from favorites');
   }
 
-  // Property listing methods
-  getAllPropertyListings(): PropertyListing[] {
-    return [...this.propertyListings];
-  }
+  getAllPropertyListings(): Observable<PropertyListing[]> {
+  return this.http.get<PropertyListing[]>(`${this.apiUrl}/properties`).pipe(
+    tap((properties) => {
+      this.propertyListings = properties; // store in memory for reuse
+    })
+  );
+}
 
   getPropertyById(id: string): PropertyListing | undefined {
     return this.propertyListings.find(p => p.id === id);
@@ -224,7 +220,6 @@ login(email: string, password: string, role: 'owner' | 'tenant'): Observable<any
   updateProfileImage(userEmail: string, imageUrl: string): boolean {
     const user = this.users.find(u => u.email === userEmail);
     if (!user) return false;
-
     user.profileImageUrl = imageUrl;
     if (this.currentUser()?.email === userEmail) {
       this.currentUser.set({ ...user });

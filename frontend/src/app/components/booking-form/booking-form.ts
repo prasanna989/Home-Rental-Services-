@@ -1,3 +1,4 @@
+// booking-form.component.ts
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -11,7 +12,7 @@ declare var Razorpay: any;
   standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './booking-form.html',
-  styleUrl: './booking-form.css'
+  styleUrls: ['./booking-form.css']
 })
 export class BookingForm {
   @Input() home!: Home;
@@ -20,9 +21,30 @@ export class BookingForm {
 
   checkInDate: string = '';
   checkOutDate: string = '';
-  paymentMethod: string = '';
+  minDate: string;
+  minCheckOutDate: string = '';
 
-  constructor(private homeService: HomeService) { }
+  constructor(private homeService: HomeService) {
+    const today = new Date();
+    this.minDate = today.toISOString().split('T')[0];
+  }
+
+  onCheckInChange() {
+    if (this.checkInDate) {
+      const checkIn = new Date(this.checkInDate);
+      const nextDay = new Date(checkIn);
+      nextDay.setDate(checkIn.getDate() + 1);
+      this.minCheckOutDate = nextDay.toISOString().split('T')[0];
+      
+      // Reset checkOutDate if it's now invalid
+      if (this.checkOutDate && new Date(this.checkOutDate) <= checkIn) {
+        this.checkOutDate = '';
+      }
+    } else {
+      this.minCheckOutDate = '';
+      this.checkOutDate = '';
+    }
+  }
 
   getNights(): number {
     if (this.checkInDate && this.checkOutDate) {
@@ -34,7 +56,35 @@ export class BookingForm {
     return 0;
   }
 
+  validateDates(): boolean {
+    if (!this.checkInDate || !this.checkOutDate) {
+      alert("Please select both check-in and check-out dates.");
+      return false;
+    }
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const checkIn = new Date(this.checkInDate);
+    const checkOut = new Date(this.checkOutDate);
+
+    if (checkIn < today) {
+      alert("Check-in date cannot be in the past.");
+      return false;
+    }
+
+    if (checkOut <= checkIn) {
+      alert("Check-out date must be after check-in date.");
+      return false;
+    }
+
+    return true;
+  }
+
   submitBooking() {
+    if (!this.validateDates()) {
+      return;
+    }
+
     const nights = this.getNights();
     if (nights <= 0) {
       alert("Please select valid check-in and check-out dates.");
@@ -52,7 +102,7 @@ export class BookingForm {
       handler: (response: any) => {
         console.log('Payment success:', response);
         this.homeService.addBooking(this.home);
-        this.bookingConfirmed.emit(this.home._id); // Changed to _id
+        this.bookingConfirmed.emit(this.home._id);
         alert(`✅ Payment successful! Booked ${nights} nights at ₹${this.home.price * nights}`);
         this.close.emit();
       },
@@ -62,7 +112,7 @@ export class BookingForm {
         contact: '9123456789'
       },
       notes: {
-        home_id: this.home._id // Changed to _id
+        home_id: this.home._id
       },
       theme: {
         color: '#28a745'
