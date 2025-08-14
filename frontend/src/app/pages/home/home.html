@@ -1,5 +1,4 @@
 <div class="home-page">
-  <!-- Hero Section -->
   <app-header></app-header>
 
   <!-- Property Type Quick Filters -->
@@ -29,13 +28,28 @@
     </div>
   </section>
 
+  <!-- Price Slider Filters -->
+  <section class="filters container">
+    <h3>Filter by Price</h3>
+    <label>Min: ₹{{ minPrice }}</label>
+    <input type="range" min="0" max="10000" step="100"
+           [(ngModel)]="minPrice" (input)="applyFilters()">
+
+    <label>Max: ₹{{ maxPrice }}</label>
+    <input type="range" min="0" max="10000" step="100"
+           [(ngModel)]="maxPrice" (input)="applyFilters()">
+
+    <button (click)="resetFilters()">Reset Filters</button>
+    <button (click)="navigateToBrowseHomes()">Browse Homes</button>
+  </section>
+
   <!-- Home Listings Section -->
   <section class="listings">
     <div class="container">
       <div class="section-header">
         <h2>Available Homes</h2>
         <div class="results-count">
-          {{ filteredHomes().length }} properties found
+          {{ filteredHomes.length }} properties found
         </div>
         <button class="mobile-search-toggle" (click)="navbar.toggleSearch()">
           <img src="https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1f50d.svg" alt="Search" class="search-icon">
@@ -43,16 +57,16 @@
         </button>
       </div>
       
-      @if (filteredHomes().length > 0) {
-        <app-home-list [homes]="filteredHomes()"></app-home-list>
-      } @else {
+      <app-home-list *ngIf="filteredHomes.length > 0; else noResults" [homes]="filteredHomes"></app-home-list>
+
+      <ng-template #noResults>
         <div class="no-results">
           <img src="https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1f6ab.svg" alt="No results" class="no-results-icon">
           <h3>No properties match your search</h3>
           <p>Try adjusting your filters or search criteria</p>
           <button (click)="resetFilters()">Reset All Filters</button>
         </div>
-      }
+      </ng-template>
     </div>
   </section>
 </div>
