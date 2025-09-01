@@ -67,9 +67,13 @@ export class HomeService {
     );
   }
 
-  addHome(homeData: FormData): Observable<Home> {
-    return this.http.post<Home>(this.apiUrl, homeData);
-  }
+addHome(homeData: FormData): Observable<Home> {
+  return this.http.post<Home>(this.apiUrl, homeData).pipe(
+    tap(newHome => {
+      this.homesCache = [...this.homesCache, newHome]; // update cache
+    })
+  );
+}
 
   updateHome(id: string, homeData: FormData): Observable<Home> {
   return this.http.put<Home | { success: boolean; data: Home }>(`${this.apiUrl}/${id}`, homeData)
