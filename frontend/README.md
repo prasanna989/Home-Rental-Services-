@@ -2,20 +2,6 @@
 
 A full-featured web application for listing, browsing, and booking rental properties. The platform supports role-based access for users, property owners, and admins, with rich features like property search, booking management, and approval workflows.
 
----
-
-## 👥 Team Members
-
-| Member Name           | Module                                   | Employee ID |
-|-----------------------|----------------------------------------- |-------------|
-| Mamidisetti Jyoshna   | User Authentication & Profile Management | 2416389     |
-| Saladi SaiLaxmi       | Property Listing & Search Module         | 2416375     |
-| Prashasti Gupta       | Detailed Property Page & Contact Owner   | 2417281     |
-| Shantanu Mathpati     | Admin Panel & Property Approval          | 2417385     |
-| Niraj Kumar           | Booking Request & History                | 2417416     |
-
----
-
 ## 🚀 Problem Statement
 
 To build a web-based rental property platform that allows:
